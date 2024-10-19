@@ -3,8 +3,8 @@
 #include <lib.h>
 #include <moduleLoader.h>
 #include <naiveConsole.h>
-
 #include <videoDriver.h>
+
 
 extern uint8_t text;
 extern uint8_t rodata;

@@ -2,6 +2,9 @@
 
 #define BUFFER_SIZE 256
 
+
+static char isKey(uint8_t key);
+
 static char buffer[BUFFER_SIZE];
 static int bufferIndex = 0;
 
@@ -17,7 +20,7 @@ static const char keyMapL[] = {
 
 };
 
-char isKey(u_int8_t key){
+static char isKey(uint8_t key){
     return (key >= 0x3B && key <= 0x44) || key == 0x57 || key == 0x58;
 }
 

@@ -15,6 +15,9 @@ GLOBAL _irq05Handler
 
 GLOBAL _exception0Handler
 
+GLOBAL saveState
+
+
 EXTERN irqDispatcher
 EXTERN exceptionDispatcher
 
@@ -70,39 +73,38 @@ SECTION .text
 	iretq
 %endmacro
 
-
-
-%macro exceptionHandler 1
-	pushState
-	;Save registers, in the following order:
-	;RAX, RBX, RCX, RDX, RBP, RDI, RSI, R8, R9, R10, R11, R12, R13, R14, R15
-	;RSP, RIP, RFLAGS
-
- 	mov [exceptregs+8*0],	rax
-	mov [exceptregs+8*1],	rbx
-	mov [exceptregs+8*2],	rcx
-	mov [exceptregs+8*3],	rdx
-	mov [exceptregs+8*4],	rsi
-	mov [exceptregs+8*5],	rdi
-	mov [exceptregs+8*6],	rbp
-	mov [exceptregs+8*7], r8
-	mov [exceptregs+8*8], r9
-	mov [exceptregs+8*9], r10
-	mov [exceptregs+8*10], r11
-	mov [exceptregs+8*11], r12
-	mov [exceptregs+8*12], r13
-	mov [exceptregs+8*13], r14
-	mov [exceptregs+8*14], r15
+%macro saveRegisters 0
+	mov [registers+8*0],	rax
+	mov [registers+8*1],	rbx
+	mov [registers+8*2],	rcx
+	mov [registers+8*3],	rdx
+	mov [registers+8*4],	rsi
+	mov [registers+8*5],	rdi
+	mov [registers+8*6],	rbp
+	mov [registers+8*7], r8
+	mov [registers+8*8], r9
+	mov [registers+8*9], r10
+	mov [registers+8*10], r11
+	mov [registers+8*11], r12
+	mov [registers+8*12], r13
+	mov [registers+8*13], r14
+	mov [registers+8*14], r15
 
 	mov rax, rsp
 
 	add rax, 160 ;Move the stack pointer to the end of the stack
 
-	mov [exceptregs+8*15], rax ;Save the stack pointer
+	mov [registers+8*15], rax ;Save the stack pointer
 	mov rax, [rsp+15*8] 
-	mov [exceptregs+8*16], rax ;Save the instruction pointer
+	mov [registers+8*16], rax ;Save the instruction pointer
 	mov rax, [rsp+15*8+8]
-	mov [exceptregs+8*17], rax ;Save the flags
+	mov [registers+8*17], rax ;Save the flags
+%endmacro
+
+
+%macro exceptionHandler 1
+	pushState
+	saveRegisters
 
 	;Call the exception dispatcher
 
@@ -111,6 +113,7 @@ SECTION .text
 
 	popState
 	add rsp, 8 ;Remove the error code from the stack
+
 	iretq
 %endmacro
 
@@ -145,6 +148,12 @@ picSlaveMask:
     pop     rbp
     retn
 
+;This function saves the state of the registers 
+saveState:
+	pushState
+	saveRegisters
+	popState
+	ret
 
 ;8254 Timer (Timer Tick)
 _irq00Handler:

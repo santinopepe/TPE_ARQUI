@@ -29,6 +29,8 @@ void picMasterMask(uint8_t mask);
 
 void picSlaveMask(uint8_t mask);
 
+void saveState(void);
+
 //Termina la ejecución de la cpu.
 void haltcpu(void);
 
