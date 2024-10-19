@@ -1,4 +1,17 @@
 #include <videoDriver.h>
+#include <font.h>
+#include <defs.h>
+
+#define CHAR_WIDTH 9
+#define CHAR_HEIGHT 16
+
+
+
+
+uint32_t cursorX = 0; 
+uint32_t cursorY = 0;
+
+
 
 struct vbe_mode_info_structure {
 	uint16_t attributes;		// deprecated, only bit 7 should be of interest to you, and it indicates the mode supports a linear frame buffer.
@@ -75,3 +88,115 @@ void putBackScreen(){
 		square++;
 	}
 }
+
+
+void newLine(){
+	cursorX = 0;
+	cursorY += CHAR_HEIGHT;
+	return; 
+}
+
+void clearScreen(){
+	for (int i = 0; i < VBE_mode_info->width; i++){
+		for (int j = 0; j < VBE_mode_info->height; j++){
+			putPixel(BLACK, i, j);
+		}
+	}
+}
+
+void clearSquare(int x, int y, int size){
+	putSquare(x, y, size, BLACK);
+}
+
+void printf(char * str, uint32_t hexColor){
+	int i = 0;
+	while(str[i] != 0){
+		putChar(str[i], hexColor, 0, 0);
+		i++;
+	}
+}
+
+void putTab(){
+	if(cursorX + 4 * CHAR_WIDTH >= VBE_mode_info->width){
+		newLine();
+		return; 
+	}
+	cursorX += 4 * CHAR_WIDTH;
+}
+
+void putBackSpace(){
+	if(cursorX - CHAR_WIDTH < 0){
+		cursorX = VBE_mode_info->width - CHAR_WIDTH;
+		cursorY -= CHAR_HEIGHT;
+		return; 
+	}
+	cursorX -= CHAR_WIDTH;
+}
+
+void putSpace(){
+	if(cursorX + CHAR_WIDTH >= VBE_mode_info->width){
+		newLine();
+		return; 
+	}
+	cursorX += CHAR_WIDTH;
+}
+
+void putSquare(int x, int y, int size, uint32_t hexColor){
+	for (int i = 0; i < size; i++){
+		for (int j = 0; j < size; j++){
+			putPixel(hexColor, x + i, y + j);
+		}
+	}
+}
+
+void putChar (char c, uint32_t hexColor){
+	switch (c)
+	{
+	case '\n':
+		newLine(); 
+		return; 
+	case '\t':
+		putTab(); 
+		return; 
+	case '\b':
+		putBackSpace(); 
+		return; 
+	case ' ':
+		putSpace();
+		return; 
+	default:
+		if ( c >= FIRST_CHAR && c <= LAST_CHAR){
+			if(cursorX + CHAR_WIDTH >= VBE_mode_info->width){
+			newLine();
+			}
+			for (int i = 0; i < 32; i++) {
+        	if (i % 2 == 0 && i != 0) {
+            y += size;  // Salto a la siguiente fila de píxeles
+            a = x;  // Reinicia la posición horizontal al inicio
+        	}
+        
+        // Comprueba el bit correspondiente en la fuente para determinar si se debe dibujar un píxel
+        	font[i + (start * 32)] & (char)0x01 ? put_square(a, y, size, hexColor) : 0;
+        
+        	a += size;  // Avanza a la siguiente posición horizontal
+        
+       		 uint8_t aux = 0x02;
+       		 for (int j = 0; j < 8; j++) {
+            // Comprueba cada bit de la fuente y dibuja un píxel si está activo
+            	((uint8_t)font[i + (start * 32)] & (uint8_t)aux) >> j ? put_square(a, y, size, hexColor) : 0;
+           		 a += size;  // Avanza a la siguiente posición horizontal
+            	aux <<= 1;  // Desplaza el bit auxiliar hacia la izquierda
+       		}
+   		}
+
+		cursorX += CHAR_WIDTH;
+	}
+		return; 
+	}
+
+	
+
+}
+
+
+

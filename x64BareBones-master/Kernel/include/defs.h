@@ -21,5 +21,15 @@
 #define ACS_DATA        (ACS_PRESENT | ACS_DSEG | ACS_WRITE)
 #define ACS_STACK       (ACS_PRESENT | ACS_DSEG | ACS_WRITE)
 
+#define NULL 0
+
+#define WHITE 0x00FFFFFF
+#define BLACK 0x00000000
+#define BLUE 0x007fd7fa
+#define GREEN 0x0065adc9
+#define RED 0x00FF0000
+#define LIGHT_BLUE 0x00ADD8E6
+#define LIGHT_GREEN 0x0090EE90
+
 
 #endif
