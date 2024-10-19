@@ -1,5 +1,6 @@
 #include <registers.h>
-
+#include <videoDriver.h>
+//#include <stdio.h>
 
 #define ZERO_EXCEPTION_ID 0
 
@@ -16,9 +17,13 @@ void exceptionDispatcher(int exception) {
 }
 
 static void zero_division() {
-	// Handler para manejar excepcíon
+	printf("Zero division exception\n");
+	printRegisters();
+	printf("\n Regresando a la shell...\n");
 }
 
 static void invalid_op_code() {
-	// Handler para manejar excepcíon
+	printf("Invalid op code exception\n");
+	printRegisters();
+	printf("\n Regresando a la shell...\n");	
 }
