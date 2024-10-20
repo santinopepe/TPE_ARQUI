@@ -1,9 +1,10 @@
 #include <stdint.h>
 #include <string.h>
 #include <lib.h>
+#include <idtLoader.h>
 #include <moduleLoader.h>
 #include <naiveConsole.h>
-#include <videoDriver.h>
+#include "videoDriver.h"
 
 
 extern uint8_t text;
@@ -52,8 +53,7 @@ void * initializeKernelBinary()
 int main()
 {	
 	load_idt();
-
-	putBackScreen();
+	//putBackScreen();
 
 	((EntryPoint)sampleCodeModuleAddress)();
 

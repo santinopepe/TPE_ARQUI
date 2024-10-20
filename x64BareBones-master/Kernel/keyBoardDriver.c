@@ -1,6 +1,6 @@
 #include <stdint.h>
 #include <defs.h>
-
+#include <lib.h>
 
 #define BUFFER_SIZE 256
 
@@ -20,7 +20,6 @@ static int cantElems = 0;
 #define KEYS 58
 #define MAX_PRESS_KEY 0x70 // Superior values are the released keys
 #define TAB_NUM 4
-#define BUFFER_SIZE 1000
 
 // Special keys
 #define ESC 0x01
@@ -112,7 +111,7 @@ static char isKey(uint8_t key){
 }
 
 void keyBoardHandler(){
-    char key = getKey();
+    uint64_t key = getKey();
     
     if(key == NULL){
         return; 

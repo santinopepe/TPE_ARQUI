@@ -3,6 +3,8 @@ GLOBAL getKey
 Global getSec
 Global getMin
 Global getHour
+GLOBAL beep
+GLOBAL stop_beep
 GLOBAL .startFunc
 GLOBAL .endFunc
 
@@ -39,6 +41,7 @@ getKey:
 	push rbp
 	mov rbp, rsp
 
+endif
 	xor rax, rax
 	in al, 0x60
 

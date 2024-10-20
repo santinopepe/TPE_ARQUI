@@ -1,4 +1,4 @@
-#include <videoDriver.h>
+#include "videoDriver.h"
 #include <font.h>
 #include <defs.h>
 
@@ -111,7 +111,7 @@ void clearSquare(int x, int y, int size){
 void printf(char * str, uint32_t hexColor){
 	int i = 0;
 	while(str[i] != 0){
-		putChar(str[i], hexColor, 0, 0);
+		putChar(str[i], hexColor);
 		i++;
 	}
 }
@@ -150,6 +150,7 @@ void putSquare(int x, int y, int size, uint32_t hexColor){
 }
 
 void putChar (char c, uint32_t hexColor){
+	int start = c - 33; //Despues sacar Magic num
 	switch (c)
 	{
 	case '\n':
@@ -170,21 +171,21 @@ void putChar (char c, uint32_t hexColor){
 			newLine();
 			}
 			for (int i = 0; i < 32; i++) {
-        	if (i % 2 == 0 && i != 0) {
-            y += size;  // Salto a la siguiente fila de píxeles
-            a = x;  // Reinicia la posición horizontal al inicio
-        	}
+        		if (i % 2 == 0 && i != 0) {
+           			cursorY += CHAR_HEIGHT;  // Salto a la siguiente fila de píxeles
+            		cursorX = 0;  // Reinicia la posición horizontal al inicio
+        		}
         
-        // Comprueba el bit correspondiente en la fuente para determinar si se debe dibujar un píxel
-        	font[i + (start * 32)] & (char)0x01 ? put_square(a, y, size, hexColor) : 0;
+        	// Comprueba el bit correspondiente en la fuente para determinar si se debe dibujar un píxel
+        	font[i + (start * 32)] & (char)0x01 ? putSquare(cursorX, cursorY, CHAR_WIDTH, hexColor) : 0;
         
-        	a += size;  // Avanza a la siguiente posición horizontal
+        	cursorX += CHAR_WIDTH;  // Avanza a la siguiente posición horizontal
         
        		 uint8_t aux = 0x02;
        		 for (int j = 0; j < 8; j++) {
             // Comprueba cada bit de la fuente y dibuja un píxel si está activo
-            	((uint8_t)font[i + (start * 32)] & (uint8_t)aux) >> j ? put_square(a, y, size, hexColor) : 0;
-           		 a += size;  // Avanza a la siguiente posición horizontal
+            	((uint8_t)font[i + (start * 32)] & (uint8_t)aux) >> j ? putSquare(cursorX, cursorY, CHAR_WIDTH, hexColor) : 0;
+           		cursorX += CHAR_WIDTH;  // Avanza a la siguiente posición horizontal
             	aux <<= 1;  // Desplaza el bit auxiliar hacia la izquierda
        		}
    		}

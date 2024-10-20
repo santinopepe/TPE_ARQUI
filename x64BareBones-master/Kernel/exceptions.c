@@ -1,7 +1,6 @@
 #include <registers.h>
-#include <videoDriver.h>
+#include "videoDriver.h"
 #include <defs.h>
-//#include <stdio.h>
 
 #define ZERO_EXCEPTION_ID 0
 

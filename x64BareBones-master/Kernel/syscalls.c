@@ -1,9 +1,9 @@
 #include <stdint.h>
-#include <videoDriver.h>
-#include "drivers/include/keyBoardDriver.h"
+#include "videoDriver.h"
+#include "keyBoardDriver.h"
 #include <lib.h>
 #include <time.h>
-#include<defs.h>
+#include <defs.h>
 
 
 #define STDIN 0
@@ -21,8 +21,7 @@
 #define TICKS 8
 #define WAIT 9
 
-extern void beep();
-extern stop_beep();
+
 
 static void sys_read(uint64_t fd, char * buffer, uint64_t count);
 static void sys_write(uint64_t fd, char * buffer, uint64_t count);
@@ -61,7 +60,7 @@ uint64_t syscallDispatcher(uint64_t nr, uint64_t arg0, uint64_t arg1, uint64_t a
             sys_square(arg0, arg1, arg2, arg3);
             return 0;
         case TICKS:
-            return getTicks();
+            return ticks_elapsed();
         case WAIT:
             sys_wait(arg0);
             return 0;
@@ -74,7 +73,7 @@ uint64_t syscallDispatcher(uint64_t nr, uint64_t arg0, uint64_t arg1, uint64_t a
 static void sys_read(uint64_t fd, char * buffer, uint64_t count){
     if(fd == STDIN){
         while(count > 0){
-            char val = next();
+            char val = nextChar();
             if (val == -1){
                 return;
             }
@@ -100,14 +99,14 @@ static void sys_clear(){
 }
 
 static void sys_seconds(uint64_t * seconds){
-    *seconds = getSeconds();
+    *seconds = getSec();
 
 }
 static void sys_minutes(uint64_t * minutes){
-    *minutes = getMinutes();
+    *minutes = getMin();
 }
 static void sys_hours(uint64_t * hours){
-    *hours = getHours();
+    *hours = getHour();
 }
 
 static void sys_sound(uint64_t time, uint64_t freq){
