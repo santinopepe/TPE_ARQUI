@@ -120,7 +120,7 @@ static void sys_sound(uint64_t time, uint64_t freq){
 }
 
 static void sys_square(int x, int y, int size, uint32_t hexColor){
-    putSquare(x, y, size, hexColor);
+    putRectangle(x, y, size,size, hexColor);
 }
 static uint64_t sys_ticks(){
     return ticks_elapsed();

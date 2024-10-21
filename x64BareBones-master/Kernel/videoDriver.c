@@ -3,7 +3,7 @@
 #include <defs.h>
 
 #define CHAR_WIDTH 9
-#define CHAR_HEIGHT 16
+#define CHAR_HEIGHT 32
 
 
 
@@ -92,7 +92,7 @@ void putBackScreen(){
 
 void newLine(){
 	cursorX = 0;
-	cursorY += CHAR_HEIGHT;
+	cursorY += CHAR_HEIGHT ;
 	return; 
 }
 
@@ -104,8 +104,8 @@ void clearScreen(){
 	}
 }
 
-void clearSquare(int x, int y, int size){
-	putSquare(x, y, size, BLACK);
+void clearRectangle(int x, int y, int height, int width){
+	putRectangle(x, y, height ,width, BLACK);
 }
 
 void printf(char * str, uint32_t hexColor){
@@ -128,9 +128,11 @@ void putBackSpace(){
 	if(cursorX - CHAR_WIDTH < 0){
 		cursorX = VBE_mode_info->width - CHAR_WIDTH;
 		cursorY -= CHAR_HEIGHT;
+		clearRectangle(cursorX, cursorY, CHAR_HEIGHT,CHAR_WIDTH);
 		return; 
 	}
 	cursorX -= CHAR_WIDTH;
+	clearRectangle(cursorX, cursorY, CHAR_HEIGHT,CHAR_WIDTH);
 }
 
 void putSpace(){
@@ -141,63 +143,46 @@ void putSpace(){
 	cursorX += CHAR_WIDTH;
 }
 
-void putSquare(int x, int y, int size, uint32_t hexColor){
-	for (int i = 0; i < size; i++){
-		for (int j = 0; j < size; j++){
+void putRectangle(int x, int y, int height, int width, uint32_t hexColor){
+	for (int i = 0; i < width; i++){
+		for (int j = 0; j < height; j++){
 			putPixel(hexColor, x + i, y + j);
 		}
 	}
 }
 
-void putChar (char c, uint32_t hexColor){
-	int start = c - 33; //Despues sacar Magic num
-	switch (c)
-	{
-	case '\n':
-		newLine(); 
-		return; 
-	case '\t':
-		putTab(); 
-		return; 
-	case '\b':
-		putBackSpace(); 
-		return; 
-	case ' ':
-		putSpace();
-		return; 
-	default:
-		if ( c >= FIRST_CHAR && c <= LAST_CHAR){
-			if(cursorX + CHAR_WIDTH >= VBE_mode_info->width){
-			newLine();
-			}
-			for (int i = 0; i < 32; i++) {
-        		if (i % 2 == 0 && i != 0) {
-           			cursorY += CHAR_HEIGHT;  // Salto a la siguiente fila de píxeles
-            		cursorX = 0;  // Reinicia la posición horizontal al inicio
-        		}
-        
-        	// Comprueba el bit correspondiente en la fuente para determinar si se debe dibujar un píxel
-        	font[i + (start * 32)] & (char)0x01 ? putSquare(cursorX, cursorY, CHAR_WIDTH, hexColor) : 0;
-        
-        	cursorX += CHAR_WIDTH;  // Avanza a la siguiente posición horizontal
-        
-       		 uint8_t aux = 0x02;
-       		 for (int j = 0; j < 8; j++) {
-            // Comprueba cada bit de la fuente y dibuja un píxel si está activo
-            	((uint8_t)font[i + (start * 32)] & (uint8_t)aux) >> j ? putSquare(cursorX, cursorY, CHAR_WIDTH, hexColor) : 0;
-           		cursorX += CHAR_WIDTH;  // Avanza a la siguiente posición horizontal
-            	aux <<= 1;  // Desplaza el bit auxiliar hacia la izquierda
-       		}
-   		}
-
-		cursorX += CHAR_WIDTH;
-	}
-		return; 
-	}
-
-	
-
+void putChar(char c, uint32_t hexColor) {
+	int start = c - FIRST_CHAR;
+    switch (c) {
+        case '\n':
+            newLine();
+            return;
+        case '\t':
+            putTab();
+            return;
+        case '\b':
+            putBackSpace();
+            return;
+        case ' ':
+            putSpace();
+            return;
+        default:
+            if (c >= FIRST_CHAR && c <= LAST_CHAR) {
+                if (cursorX + CHAR_WIDTH >= VBE_mode_info->width) {
+                    newLine();
+                }
+                // Dibujar el carácter en la posición actual del cursor (letras invertidas)
+                for (int i = 0; i < CHAR_HEIGHT ; i++) {
+                    for (int j = 0; j < CHAR_WIDTH; j++) {
+                        // Cambiar el orden de los bits, dibujándolos de derecha a izquierda
+                        if ((uint8_t)font[i + ((start) * 32)] & (1 << j)) {
+                        	putPixel(hexColor, cursorX + j, cursorY + i);
+                    	}
+                    }
+                }
+                // Incrementar la posición del cursor horizontalmente
+                cursorX += CHAR_WIDTH;
+            }
+            return;
+    }
 }
-
-
-

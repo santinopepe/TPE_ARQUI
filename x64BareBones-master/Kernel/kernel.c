@@ -2,6 +2,7 @@
 #include <string.h>
 #include <lib.h>
 #include <idtLoader.h>
+#include "keyboardDriver.h"
 #include <moduleLoader.h>
 #include <naiveConsole.h>
 #include "videoDriver.h"
@@ -54,10 +55,17 @@ int main()
 {	
 	load_idt();
 	//putBackScreen();
+	putTab();
+	printf("Hello World!", 0x00FF00);
+	putBackSpace();
+	putBackSpace();
+	
 
 	((EntryPoint)sampleCodeModuleAddress)();
 
-	while(1);
+	while(1){
+		keyBoardHandler(); 
+	}
 	
 
 	return 0;

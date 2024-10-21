@@ -8,7 +8,7 @@ void newLine();
 
 void clearScreen();
 
-void clearSquare(int x, int y, int size);
+void clearRectagle(int x, int y, int height, int width);
 
 void printf(char * str, uint32_t hexColor);
 
@@ -18,7 +18,7 @@ void putBackSpace();
 
 void putSpace();
 
-void putSquare(int x, int y, int size, uint32_t hexColor);
+void putRectangle(int x, int y, int height, int width, uint32_t hexColor);
 
 void putChar(char c, uint32_t hexColor);
 

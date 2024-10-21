@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include "videoDriver.h"
 #include <defs.h>
 #include <lib.h>
 
