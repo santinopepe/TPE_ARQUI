@@ -5,6 +5,8 @@ GLOBAL picMasterMask
 GLOBAL picSlaveMask
 GLOBAL haltcpu
 GLOBAL _hlt
+GLOBAL _syscallHandler
+GLOBAL _exception01Handler
 
 GLOBAL _irq00Handler
 GLOBAL _irq01Handler
@@ -17,9 +19,10 @@ GLOBAL _exception0Handler
 
 GLOBAL saveState
 
-
+EXTERN syscallDispatcher
 EXTERN irqDispatcher
 EXTERN exceptionDispatcher
+EXTERN keyBoardHandler
 
 SECTION .text
 
@@ -148,6 +151,35 @@ picSlaveMask:
     pop     rbp
     retn
 
+_syscallHandler:
+	pushState
+	
+	push r9
+	mov r9, r8
+	mov r8, r10
+	mov rcx, rdx
+	mov rdx, rsi
+	mov rsi, rdi
+	mov rdi, rax
+	call syscallDispatcher
+	mov [aux], rax 
+
+	mov al,20h
+	out 20h,al
+
+	pop r9
+	mov rsp,rbp 
+	popState
+
+	mov rax, [aux]
+	iretq
+
+
+
+
+
+
+
 ;This function saves the state of the registers 
 saveState:
 	pushState
@@ -161,6 +193,21 @@ _irq00Handler:
 
 ;Keyboard
 _irq01Handler:
+	pushState
+	saveRegisters
+
+	mov byte [capturedReg], 1
+	jmp exit
+
+	call keyBoardHandler
+	
+
+exit:
+	mov al, 20h
+	out 20h, al
+	popState 
+	iretq
+
 	irqHandlerMaster 1
 
 ;Cascade pic never called
@@ -183,6 +230,11 @@ _irq05Handler:
 ;Zero Division Exception
 _exception0Handler:
 	exceptionHandler 0
+
+;Invalid Opcode Exception
+_exception01Handler:
+	exceptionHandler 1
+
 
 haltcpu:
 	cli

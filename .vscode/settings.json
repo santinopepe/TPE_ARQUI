@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "keyboarddriver.h": "c",
+        "videodriver.h": "c",
+        "sounddriver.h": "c"
+    }
+}

@@ -1,6 +1,10 @@
+#ifndef KEYBOARDDRIVER_H
+#define KEYBOARDDRIVER_H
 
-extern char getKey(); 
+extern char getKey();
 
 char keyBoardHandler();
 
-char nextChar(); 
+char nextChar();
+
+#endif // KEYBOARDDRIVER_H

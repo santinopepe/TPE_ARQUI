@@ -1,3 +1,4 @@
+
 /* sampleCodeModule.c */
 
 char * v = (char*)0xB8000 + 79 * 2;
@@ -14,7 +15,6 @@ int main() {
         *(v+1) = 0xF2;
         v += 2;
     }
-
 
 	//Test if BSS is properly set up
 	if (var1 == 0 && var2 == 0)

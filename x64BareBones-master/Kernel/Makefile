@@ -18,10 +18,13 @@ STATICLIBS=
 all: $(KERNEL)
 
 $(KERNEL): $(LOADEROBJECT) $(OBJECTS) $(STATICLIBS) $(OBJECTS_ASM) $(OBJECTS_DRIVERS)
-	$(LD) $(LDFLAGS) -T kernel.ld -o $(KERNEL) $(LOADEROBJECT) $(OBJECTS) $(OBJECTS_ASM) $(STATICLIBS)
+	$(LD) $(LDFLAGS) -T kernel.ld -o   $(KERNEL) $(LOADEROBJECT) $(OBJECTS) $(OBJECTS_ASM) $(STATICLIBS) 
 
 %.o: %.c
-	$(GCC) $(GCCFLAGS) -I./include  -c $< -o $@
+	$(GCC) $(GCCFLAGS) -I./include -I./drivers/include -c $< -o $@ 
+
+#%.o: %.c
+#	$(GCC) $(GCCFLAGS) -I./include -I. -c $< -o $@ 
 
 %.o : %.asm
 	$(ASM) $(ASMFLAGS) $< -o $@
@@ -31,5 +34,6 @@ $(LOADEROBJECT):
 
 clean:
 	rm -rf asm/*.o *.o *.bin
+	rm -rf drivers/*.o *.o *.bin
 
 .PHONY: all clean

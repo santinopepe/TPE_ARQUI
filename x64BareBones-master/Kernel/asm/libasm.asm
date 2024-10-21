@@ -7,6 +7,8 @@ GLOBAL beep
 GLOBAL stop_beep
 GLOBAL .startFunc
 GLOBAL .endFunc
+GLOBAL inb
+GLOBAL outb
 
 section .text
 	
@@ -48,8 +50,6 @@ endif
 	mov rsp, rbp
 	pop rbp
 	ret
-
-
 
 getSec:
 	push rbp
@@ -123,4 +123,27 @@ stop_beep:
 
 
 
+
+inb:				; Funciones para el correcto funcionamiento del soundDriver
+	push rbp
+	mov rbp, rsp
+
+    mov rdx,rdi
+    in al,dx		; pasaje en 8 bits
+
+	mov rsp, rbp
+	pop rbp
+	ret
+
+outb:
+	push rbp
+	mov rbp, rsp
+
+    mov rax, rsi    
+    mov rdx, rdi
+	out dx, al		; pasaje en 8 bits
+
+	mov rsp, rbp
+	pop rbp
+	ret
 

@@ -2,7 +2,9 @@
 #include <string.h>
 #include <lib.h>
 #include <idtLoader.h>
-#include "keyboardDriver.h"
+#include <time.h>
+#include "keyBoardDriver.h"
+#include "soundDriver.h"
 #include <moduleLoader.h>
 #include <naiveConsole.h>
 #include "videoDriver.h"
@@ -54,19 +56,15 @@ void * initializeKernelBinary()
 int main()
 {	
 	load_idt();
-	//putBackScreen();
-	putTab();
-	printf("Hello World!", 0x00FF00);
-	putBackSpace();
-	putBackSpace();
+	
+	while (1)
+	{
+		beep2();
+	}
 	
 
 	((EntryPoint)sampleCodeModuleAddress)();
 
-	while(1){
-		keyBoardHandler(); 
-	}
-	
-
 	return 0;
 }
+
