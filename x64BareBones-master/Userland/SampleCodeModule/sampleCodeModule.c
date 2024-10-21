@@ -1,3 +1,4 @@
+#include "include/C_lib.h"
 
 /* sampleCodeModule.c */
 
@@ -8,13 +9,7 @@ static int var2 = 0;
 
 
 int main() {
-	//All the following code may be removed
-	char * str = "Arquitectura de Computadoras";
-    for(int i = 0; str[i] != 0; i++){
-        *v = str[i];
-        *(v+1) = 0xF2;
-        v += 2;
-    }
+	printf("Hello World!\n");
 
 	//Test if BSS is properly set up
 	if (var1 == 0 && var2 == 0)

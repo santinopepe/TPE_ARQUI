@@ -57,12 +57,7 @@ int main()
 {	
 	load_idt();
 	
-	while (1)
-	{
-		beep2();
-	}
 	
-
 	((EntryPoint)sampleCodeModuleAddress)();
 
 	return 0;

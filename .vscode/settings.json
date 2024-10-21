@@ -2,6 +2,7 @@
     "files.associations": {
         "keyboarddriver.h": "c",
         "videodriver.h": "c",
-        "sounddriver.h": "c"
+        "sounddriver.h": "c",
+        "usr_syscalls.h": "c"
     }
 }

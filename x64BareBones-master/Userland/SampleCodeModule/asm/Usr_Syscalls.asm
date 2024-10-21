@@ -1,63 +1,63 @@
 section .text
 
-GLOBAL read
-GLOBAL write
-GLOBAL clear
-GLOBAL seconds
-GLOBAL minutes
-GLOBAL hours
-GLOBAL sound
-GLOBAL square
-GLOBAL ticks
-GLOBAL wait
+GLOBAL sysCall_read
+GLOBAL sysCall_write
+GLOBAL sysCall_clear
+GLOBAL sysCall_seconds
+GLOBAL sysCall_minutes
+GLOBAL sysCall_hours
+GLOBAL sysCall_sound
+GLOBAL sysCall_square
+GLOBAL sysCall_ticks
+GLOBAL sysCall_wait
 
-read:
+sysCall_read:
     mov rax, 0
     int 80h
     ret
 
-write:
+sysCall_write:
     mov rax, 1
     int 80h
     ret
 
-clear:
+sysCall_clear:
     mov rax, 2
     int 80h
     ret
 
-seconds:
+sysCall_seconds:
     mov rax, 3
     int 80h
     ret
 
-minutes:
+sysCall_minutes:
     mov rax, 4
     int 80h
     ret
 
-hours:
+sysCall_hours:
     mov rax, 5
     int 80h
     ret
 
-sound:
+sysCall_sound:
     mov rax, 6
     int 80h
     ret
 
-square:
+sysCall_square:
     mov rax, 7
     int 80h
     ret
 
 
-ticks:
+sysCall_ticks:
     mov rax, 8
     int 80h
     ret
 
-wait:
+sysCall_wait:
     mov rax, 9
     int 80h
     ret
