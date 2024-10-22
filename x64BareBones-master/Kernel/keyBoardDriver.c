@@ -139,6 +139,7 @@ void keyBoardHandler(){
             break;
         case L_SHIFT_PRESS:
         case R_SHIFT_PRESS:
+            printf("SHIFT", WHITE);
             shiftPressed = 1;
             break;
         case L_SHIFT_RELEASE:
@@ -146,6 +147,7 @@ void keyBoardHandler(){
             shiftPressed = 0;
             break;
         case CAPS_LOCK_PRESS:
+            printf("CAPS LOCK", WHITE);
             capsLock = 1 - capsLock;
             break;    
         default:
@@ -166,10 +168,7 @@ void keyBoardHandler(){
             cantElems++;
        }
     }
-
-   // printf(keyValues[key][shiftPressed || capsLock], WHITE);
     
-
     if(snapShotTaken){
        saveState();
        snapShotTaken = 0; 

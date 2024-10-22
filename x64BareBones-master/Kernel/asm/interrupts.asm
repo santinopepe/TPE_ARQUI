@@ -18,7 +18,6 @@ GLOBAL _irq05Handler
 GLOBAL _exception0Handler
 
 GLOBAL saveState
-
 EXTERN syscallDispatcher
 EXTERN irqDispatcher
 EXTERN exceptionDispatcher
@@ -182,11 +181,6 @@ _syscallHandler:
 	iretq
 
 
-
-
-
-
-
 ;This function saves the state of the registers 
 saveState:
 	pushState
@@ -200,15 +194,6 @@ _irq00Handler:
 
 ;Keyboard
 _irq01Handler:
-	irqHandlerMaster 1
-
-
-exit:
-	mov al, 20h
-	out 20h, al
-	popState 
-	iretq
-
 	irqHandlerMaster 1
 
 ;Cascade pic never called
