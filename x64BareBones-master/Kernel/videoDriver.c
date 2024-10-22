@@ -4,10 +4,7 @@
 
 #define CHAR_WIDTH 9
 #define CHAR_HEIGHT 32
-
-
-
-
+ 
 uint32_t cursorX = 0; 
 uint32_t cursorY = 0;
 
@@ -55,6 +52,9 @@ typedef struct vbe_mode_info_structure * VBEInfoPtr;
 
 VBEInfoPtr VBE_mode_info = (VBEInfoPtr) 0x0000000000005C00;
 
+static uint64_t posY[100]={0};
+
+
 void putPixel(uint32_t hexColor, uint64_t x, uint64_t y) {
     uint8_t * framebuffer = (uint8_t *) VBE_mode_info->framebuffer;
     uint64_t offset = (x * ((VBE_mode_info->bpp)/8)) + (y * VBE_mode_info->pitch);
@@ -91,8 +91,9 @@ void putBackScreen(){
 
 
 void newLine(){
+	posY[cursorY/CHAR_HEIGHT] = cursorX;
 	cursorX = 0;
-	cursorY += CHAR_HEIGHT ;
+	cursorY += CHAR_HEIGHT;
 	return; 
 }
 
@@ -110,7 +111,7 @@ void clearRectangle(int x, int y, int height, int width){
 
 void printf(char * str, uint32_t hexColor){
 	int i = 0;
-	while(str[i] != 0){
+	while(str[i] != '\0'){
 		putChar(str[i], hexColor);
 		i++;
 	}
@@ -130,6 +131,12 @@ void putBackSpace(){
 		cursorY -= CHAR_HEIGHT;
 		clearRectangle(cursorX, cursorY, CHAR_HEIGHT,CHAR_WIDTH);
 		return; 
+	}
+	if(cursorX==0){
+		cursorY -= CHAR_HEIGHT;
+		cursorX = posY[cursorY/CHAR_HEIGHT];
+		clearRectangle(cursorX, cursorY, CHAR_HEIGHT,CHAR_WIDTH);
+		return;
 	}
 	cursorX -= CHAR_WIDTH;
 	clearRectangle(cursorX, cursorY, CHAR_HEIGHT,CHAR_WIDTH);

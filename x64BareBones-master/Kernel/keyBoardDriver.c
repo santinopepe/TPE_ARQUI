@@ -25,16 +25,28 @@ static int cantElems = 0;
 
 // Special keys
 #define ESC 0x01
-#define ENTER 0x1C
-#define BACKSPACE 0x0E
-#define TAB 0x0F
+#define ENTER 0x0A
+#define BACKSPACE 0x08 // 0x0E
+#define TAB 0x09
+
 #define L_SHIFT_PRESS 0x2A
 #define L_SHIFT_RELEASE 0xAA
 #define R_SHIFT_PRESS 0x36
 #define R_SHIFT_RELEASE 0xB6
+
 #define CAPS_LOCK_PRESS 0x3A
+
 #define ALT_PRESS 0x3B
 #define ALT_RELEASE 0xB8
+
+#define UPPER_ARROW_PRESS 0x48
+#define LOWER_ARROW_PRESS 0x50
+#define LEFT_ARROW_PRESS 0x4B
+#define RIGHT_ARROW_PRESS 0x4D
+#define UPPER_ARROW_RELEASE 0xC8
+#define LOWER_ARROW_RELEASE 0xD0
+#define LEFT_ARROW_RELEASE 0xCB
+#define RIGHT_ARROW_RELEASE 0xCD
 
 #define CTRL_PRESS 0x1D
 #define CTRL_RELEASE 0x9D
@@ -119,7 +131,7 @@ void keyBoardHandler(){
       return; 
    }
 
-    if(key >= 0 && key <= 256 && keyValues[key][0] != 0){
+    if(key >= 0 && key <= 256 || keyValues[key][0] != 0){ //verificar la segunda condicion
         switch (key)
         {
         case BACKSPACE:
@@ -147,9 +159,47 @@ void keyBoardHandler(){
             shiftPressed = 0;
             break;
         case CAPS_LOCK_PRESS:
-            printf("CAPS LOCK", WHITE);
-            capsLock = 1 - capsLock;
-            break;    
+            //printf("CAPS LOCK", WHITE);
+            capsLock = 1-capsLock;
+            break;  
+        /*  
+        case UPPER_ARROW_PRESS:
+            buffer[bufferIndex++] = 0;
+            buffer[bufferIndex++] = 0;
+            buffer[bufferIndex++] = 0;
+            buffer[bufferIndex++] = 0;
+            
+            putChar('^', WHITE);
+            //cantElems += 4;
+            break;  
+        case LOWER_ARROW_PRESS:
+            buffer[bufferIndex++] = 0;
+            buffer[bufferIndex++] = 0;
+            buffer[bufferIndex++] = 0;
+            buffer[bufferIndex++] = 0;
+            
+            putChar('v', WHITE);
+            //cantElems += 4;
+            break;
+        case LEFT_ARROW_PRESS:
+            buffer[bufferIndex++] = 0;
+            buffer[bufferIndex++] = 0;
+            buffer[bufferIndex++] = 0;
+            buffer[bufferIndex++] = 0;
+            
+            putChar('<', WHITE);
+            //cantElems += 4;
+            break;
+        case RIGHT_ARROW_PRESS:
+            buffer[bufferIndex++] = 0;
+            buffer[bufferIndex++] = 0;
+            buffer[bufferIndex++] = 0;
+            buffer[bufferIndex++] = 0;
+            
+            putChar('>', WHITE);
+            //cantElems += 4;
+            break;
+            */
         default:
             break;
        }
@@ -170,7 +220,9 @@ void keyBoardHandler(){
     }
 
     putChar(keyValues[key][shiftPressed || capsLock], WHITE);
-    
+    //printf(key,WHITE);
+    //imprimo con putChar los valores de las teclas
+
     if(snapShotTaken){
        saveState();
        snapShotTaken = 0; 
