@@ -168,6 +168,8 @@ void keyBoardHandler(){
             cantElems++;
        }
     }
+
+    putChar(keyValues[key][shiftPressed || capsLock], WHITE);
     
     if(snapShotTaken){
        saveState();
