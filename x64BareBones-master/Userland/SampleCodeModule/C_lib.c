@@ -66,6 +66,29 @@ int strcmp(const char * str1, const char * str2){
     return str1[i] == str2[i];
 }
 
+void printInt(int num){
+    if(num == 0){
+        putChar('0');
+        return;
+    }
+    if(num < 0){
+        putChar('-');
+        num = -num;
+    }
+    char buffer[10];
+    int i = 0;
+    while(num > 0){
+        buffer[i] = num % 10 + '0';
+        num /= 10;
+        i++;
+    }
+    i--;
+    while(i >= 0){
+        putChar(buffer[i]);
+        i--;
+    }
+}
+
 static void va_print(const char * str, va_list list){
     int i = 0;
     while(str[i] != 0){
@@ -74,7 +97,7 @@ static void va_print(const char * str, va_list list){
             switch (str[i])
             {
             case 'd':
-                printInt(va_arg(list, int));
+                printInt((int)va_arg(list, int));   //CHEQUEAR PQ PRINTINT RECIBE INT
                 break;
             case 'c':
                 putChar(va_arg(list, int));
@@ -99,28 +122,7 @@ void printf(const char * str, ...){
     va_end(list);
 }
 
-void printInt(int num){
-    if(num == 0){
-        putChar('0');
-        return;
-    }
-    if(num < 0){
-        putChar('-');
-        num = -num;
-    }
-    char buffer[10];
-    int i = 0;
-    while(num > 0){
-        buffer[i] = num % 10 + '0';
-        num /= 10;
-        i++;
-    }
-    i--;
-    while(i >= 0){
-        putChar(buffer[i]);
-        i--;
-    }
-}
+
 
 
 

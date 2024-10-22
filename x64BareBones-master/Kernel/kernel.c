@@ -57,10 +57,6 @@ int main()
 {	
 	load_idt();
 	
-
-
-	printf("MAVU ANDA CANCHA BOBA", 0x0065adc9);
-
 	((EntryPoint)sampleCodeModuleAddress)();
 
 	return 0;

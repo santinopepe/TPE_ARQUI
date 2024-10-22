@@ -1,6 +1,6 @@
 #include "videoDriver.h"
-#include <font.h>
-#include <defs.h>
+#include "include/font.h"
+#include "include/defs.h"
 
 #define CHAR_WIDTH 9
 #define CHAR_HEIGHT 32

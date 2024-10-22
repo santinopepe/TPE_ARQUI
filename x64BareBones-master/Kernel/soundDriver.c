@@ -6,7 +6,6 @@ extern void outb(uint16_t out1, uint8_t in1);
 
 void makeSound(uint64_t time){
     beep(50);
-    int i = 0;
     sleep(time);
     stop_beep();
 }

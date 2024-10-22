@@ -1,7 +1,8 @@
 #include <stdint.h>
 #include "videoDriver.h"
-#include <defs.h>
-#include <lib.h>
+#include "include/defs.h"
+#include "include/lib.h"
+#include "include/interrupts.h"
 
 #define BUFFER_SIZE 256
 
@@ -106,19 +107,19 @@ char nextChar(){
     cantElems--;
     return buffer[currentChar++];
 }
-/*
+
 static char isKey(uint8_t key){
     return (key >= 0x3B && key <= 0x44) || key == 0x57 || key == 0x58;
-}*/
+}
 
 void keyBoardHandler(){
     uint64_t key = getKey();
     
-   /*f(key == NULL){
+   if(key == NULL){
       return; 
-   }*/
+   }
 
-    /*if(key >= 0 && key <= 256 && keyValues[key][0] != 0){
+    if(key >= 0 && key <= 256 && keyValues[key][0] != 0){
         switch (key)
         {
         case BACKSPACE:
@@ -164,9 +165,10 @@ void keyBoardHandler(){
             buffer[bufferIndex++] = keyValues[key][shiftPressed || capsLock];
             cantElems++;
        }
-    }*/
+    }
 
-    printf(keyValues[key][shiftPressed || capsLock], WHITE);
+   // printf(keyValues[key][shiftPressed || capsLock], WHITE);
+    
 
     if(snapShotTaken){
        saveState();
