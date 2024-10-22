@@ -42,8 +42,7 @@ cpuVendor:
 getKey:
 	push rbp
 	mov rbp, rsp
-
-endif
+	
 	xor rax, rax
 	in al, 0x60
 

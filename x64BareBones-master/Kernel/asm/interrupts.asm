@@ -66,6 +66,13 @@ SECTION .text
 	pushState
 
 	mov rdi, %1 ; pasaje de parametro
+	cmp rdi, 1 
+	jne .noSave
+	saveRegisters
+
+	.noSave:
+	mov rsi,rsp
+	mov rdi,%1
 	call irqDispatcher
 
 	; signal pic EOI (End of Interrupt)
@@ -193,14 +200,8 @@ _irq00Handler:
 
 ;Keyboard
 _irq01Handler:
-	pushState
-	saveRegisters
+	irqHandlerMaster 1
 
-	mov byte [capturedReg], 1
-	jmp exit
-
-	call keyBoardHandler
-	
 
 exit:
 	mov al, 20h

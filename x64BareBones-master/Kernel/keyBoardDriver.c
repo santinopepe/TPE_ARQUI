@@ -54,7 +54,7 @@ static unsigned char keyValues[KEYS][2] = {
 	{'-', '_'},
 	{'=', '+'},
 	{'\b', '\b'},
-	{9, 9},
+	{'\t', '\t'},
 	{'q', 'Q'},
 	{'w', 'W'},
 	{'e', 'E'},
@@ -106,19 +106,19 @@ char nextChar(){
     cantElems--;
     return buffer[currentChar++];
 }
-
+/*
 static char isKey(uint8_t key){
     return (key >= 0x3B && key <= 0x44) || key == 0x57 || key == 0x58;
-}
+}*/
 
 void keyBoardHandler(){
     uint64_t key = getKey();
     
-    if(key == NULL){
-        return; 
-    }
+   /*f(key == NULL){
+      return; 
+   }*/
 
-    if(isKey(key)){
+    /*if(key >= 0 && key <= 256 && keyValues[key][0] != 0){
         switch (key)
         {
         case BACKSPACE:
@@ -149,7 +149,7 @@ void keyBoardHandler(){
             break;    
         default:
             break;
-        }
+       }
 
         if(key < MAX_PRESS_KEY){
             if(bufferIndex == BUFFER_SIZE){
@@ -163,9 +163,10 @@ void keyBoardHandler(){
             }
             buffer[bufferIndex++] = keyValues[key][shiftPressed || capsLock];
             cantElems++;
-        }
-        
-    }
+       }
+    }*/
+
+    printf(keyValues[key][shiftPressed || capsLock], WHITE);
 
     if(snapShotTaken){
        saveState();
