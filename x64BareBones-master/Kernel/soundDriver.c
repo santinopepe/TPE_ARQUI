@@ -41,5 +41,5 @@ void makeSound(uint64_t time){
  	 play_sound(1000);
  	 sleep(1000);
  	 nosound();
-          //set_PIT_2(old_frequency);
+    //set_PIT_2(old_frequency);
  }

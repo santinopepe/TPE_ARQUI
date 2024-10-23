@@ -126,6 +126,9 @@ void putTab(){
 }
 
 void putBackSpace(){
+	if(cursorY == 0 && cursorX == 0){
+		return;
+	}
 	if(cursorX - CHAR_WIDTH < 0){
 		cursorX = VBE_mode_info->width - CHAR_WIDTH;
 		cursorY -= CHAR_HEIGHT;

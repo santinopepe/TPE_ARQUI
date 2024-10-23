@@ -25,9 +25,9 @@ static int cantElems = 0;
 
 // Special keys
 #define ESC 0x01
-#define ENTER 0x0A
-#define BACKSPACE 0x08 // 0x0E
-#define TAB 0x09
+#define ENTER 0x1C
+#define BACKSPACE 0x0E// 0x0E
+#define TAB 0x0F
 
 #define L_SHIFT_PRESS 0x2A
 #define L_SHIFT_RELEASE 0xAA
@@ -137,31 +137,30 @@ void keyBoardHandler(){
         case BACKSPACE:
             buffer[bufferIndex++] = '\b';
             cantElems++;
-            return; 
+            break;
         case ENTER:
             buffer[bufferIndex++] = '\n';
             cantElems++;
-            return; 
+            break;
         case TAB:
             buffer[bufferIndex++] = '\t';
             cantElems++;
-            return; 
+            break; 
         case ESC:
             snapShotTaken = 1;
             break;
         case L_SHIFT_PRESS:
         case R_SHIFT_PRESS:
-            printf("SHIFT", WHITE);
             shiftPressed = 1;
             break;
         case L_SHIFT_RELEASE:
         case R_SHIFT_RELEASE:
+            printf("SHIFT RELEASE", WHITE);
             shiftPressed = 0;
             break;
         case CAPS_LOCK_PRESS:
-            //printf("CAPS LOCK", WHITE);
             capsLock = 1-capsLock;
-            break;  
+            break;   
         /*  
         case UPPER_ARROW_PRESS:
             buffer[bufferIndex++] = 0;
@@ -219,10 +218,11 @@ void keyBoardHandler(){
        }
     }
 
-    putChar(keyValues[key][shiftPressed || capsLock], WHITE);
+if(key< MAX_PRESS_KEY){ //BORRAR ESTO CAMBIAR BREAK POR RETURN EN BACKSPACE ENTER Y TAB
+    putChar(buffer[bufferIndex-1], WHITE);
     //printf(key,WHITE);
     //imprimo con putChar los valores de las teclas
-
+    }
     if(snapShotTaken){
        saveState();
        snapShotTaken = 0; 
