@@ -9,7 +9,8 @@ static int var2 = 0;
 
 
 int main() {
-
+	putChar('H', 1,1);
+	
 	//Test if BSS is properly set up
 	if (var1 == 0 && var2 == 0)
 		return 0xDEADC0DE;

@@ -3,16 +3,17 @@
 
 #include <stdint.h>
 
-void sysCall_write(int fd, char c);
+void sysCall_write(char *c, int size, int fd);
 
 uint8_t sysCall_read(char * buff);
 
 void sysCall_clear();
 
 void sysCall_seconds(int * sec);
-void sysCall_minutes(int * min);
-void sysCall_hours(int * hours);
 
+void sysCall_minutes(int * min);
+
+void sysCall_hours(int * hours);
 
 void sysCall_sound(uint64_t freq, uint64_t time);
 

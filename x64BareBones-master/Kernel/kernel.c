@@ -3,11 +3,11 @@
 #include <lib.h>
 #include <idtLoader.h>
 #include <time.h>
-#include "keyBoardDriver.h"
-#include "soundDriver.h"
+#include "drivers/include/keyBoardDriver.h"
+#include "drivers/include/soundDriver.h"
 #include <moduleLoader.h>
 #include <naiveConsole.h>
-#include "videoDriver.h"
+#include "drivers/include/videoDriver.h"
 
 
 extern uint8_t text;
@@ -57,8 +57,6 @@ int main()
 {	
 	load_idt();
 	
-	
-
 	((EntryPoint)sampleCodeModuleAddress)();
 	
 	while(1);

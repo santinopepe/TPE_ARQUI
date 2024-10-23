@@ -1,7 +1,7 @@
 
 char read_char(char * buff);
 
-void putChar(char c);
+void putChar(char c, int size, int fd);
 
 void puts(const char * str);
 

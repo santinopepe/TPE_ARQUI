@@ -1,6 +1,6 @@
 #include <stdint.h>
-#include "videoDriver.h"
-#include "keyBoardDriver.h"
+#include "drivers/include/videoDriver.h"
+#include "drivers/include/keyBoardDriver.h"
 #include <lib.h>
 #include <time.h>
 #include <defs.h>
@@ -24,7 +24,7 @@
 
 
 static void sys_read(uint64_t fd, char * buffer, uint64_t count);
-static void sys_write(uint64_t fd, char * buffer, uint64_t count);
+static void sys_write( char * buffer);
 static void sys_clear();
 static void sys_seconds(uint64_t * seconds);
 static void sys_minutes(uint64_t * minutes);
@@ -40,7 +40,7 @@ uint64_t syscallDispatcher(uint64_t nr, uint64_t arg0, uint64_t arg1, uint64_t a
         case READ:
             sys_read(arg0, (char *)arg1, arg2);
         case WRITE:
-            sys_write(arg0, (char *)arg1, arg2);
+            sys_write((char *)arg1);
             return 0;
         case CLEAR:
             sys_clear();
@@ -86,12 +86,8 @@ static void sys_read(uint64_t fd, char * buffer, uint64_t count){
     }
 
 }
-static void sys_write(uint64_t fd, char * buffer, uint64_t count){
-    if(fd == STDOUT){
-       printf(buffer, WHITE);
-    }else if (fd == STDERR){
-       printf("Error: Invalid file descriptor\n", RED);
-    }
+static void sys_write(char * buffer){
+    putChar(*buffer, WHITE);
 }
 
 static void sys_clear(){

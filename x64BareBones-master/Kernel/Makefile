@@ -18,7 +18,7 @@ STATICLIBS=
 all: $(KERNEL)
 
 $(KERNEL): $(LOADEROBJECT) $(OBJECTS) $(STATICLIBS) $(OBJECTS_ASM) $(OBJECTS_DRIVERS)
-	$(LD) $(LDFLAGS) -T kernel.ld -o   $(KERNEL) $(LOADEROBJECT) $(OBJECTS) $(OBJECTS_ASM) $(STATICLIBS) 
+	$(LD) $(LDFLAGS) -T kernel.ld -o   $(KERNEL) $(LOADEROBJECT) $(OBJECTS) $(OBJECTS_ASM) $(STATICLIBS) $(OBJECTS_DRIVERS)
 
 %.o: %.c
 	$(GCC) $(GCCFLAGS) -I./include -I./drivers/include -c $< -o $@ 

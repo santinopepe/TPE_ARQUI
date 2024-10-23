@@ -1,5 +1,5 @@
 #include <registers.h>
-#include "videoDriver.h"
+#include "drivers/include/videoDriver.h"
 #include <defs.h>
 
 #define ZERO_EXCEPTION_ID 0

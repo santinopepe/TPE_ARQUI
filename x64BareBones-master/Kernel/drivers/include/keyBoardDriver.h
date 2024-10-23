@@ -3,7 +3,7 @@
 
 extern char getKey();
 
-char keyBoardHandler();
+void keyBoardHandler();
 
 char nextChar();
 

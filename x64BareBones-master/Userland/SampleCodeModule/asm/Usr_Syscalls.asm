@@ -18,6 +18,7 @@ sysCall_read:
 
 sysCall_write:
     mov rax, 1
+    mov rsi, rdi
     int 80h
     ret
 

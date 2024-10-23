@@ -8,14 +8,14 @@ char read_char(char * buff){
     return buffer[0];
 }
 
-void putChar(char c){
-    sysCall_write(1,c);
+void putChar(char c, int size, int fd){
+    sysCall_write(&c, 1 , 1);
 }
 
 void puts(const char * str){
     int i = 0;
     while(str[i] != 0){
-        putChar(str[i]);
+        putChar(str[i], 1 , 1);
         i++;
     }
 }
@@ -23,7 +23,7 @@ void puts(const char * str){
 void printNchars(const char * str, int n){
     int i = 0;
     while(str[i] != 0 && i < n){
-        putChar(str[i]);
+        putChar(str[i], 1, 1);
         i++;
     }
 }
@@ -68,11 +68,11 @@ int strcmp(const char * str1, const char * str2){
 
 void printInt(int num){
     if(num == 0){
-        putChar('0');
+        putChar('0',1, 1);
         return;
     }
     if(num < 0){
-        putChar('-');
+        putChar('-',1 ,1);
         num = -num;
     }
     char buffer[10];
@@ -84,14 +84,14 @@ void printInt(int num){
     }
     i--;
     while(i >= 0){
-        putChar(buffer[i]);
+        putChar(buffer[i],1,1);
         i--;
     }
 }
 
 static void va_print(const char * str, va_list list){
     int i = 0;
-    while(str[i] != 0){
+    while(str[i] != '\0'){
         if(str[i] == '%'){
             i++;
             switch (str[i])
@@ -100,7 +100,7 @@ static void va_print(const char * str, va_list list){
                 printInt((int)va_arg(list, int));   //CHEQUEAR PQ PRINTINT RECIBE INT
                 break;
             case 'c':
-                putChar(va_arg(list, int));
+                putChar(va_arg(list, int),1,1);
                 break;
             case 's':
                 puts(va_arg(list, char *));
@@ -109,7 +109,7 @@ static void va_print(const char * str, va_list list){
                 break;
             }
         }else{
-            putChar(str[i]);
+            putChar(str[i],1,1);
         }
         i++;
     }

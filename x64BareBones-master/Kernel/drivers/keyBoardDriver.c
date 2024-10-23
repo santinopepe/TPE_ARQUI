@@ -1,8 +1,9 @@
 #include <stdint.h>
-#include "videoDriver.h"
-#include "include/defs.h"
-#include "include/lib.h"
-#include "include/interrupts.h"
+#include "include/videoDriver.h"
+#include <defs.h>
+#include <lib.h>
+#include "include/keyBoardDriver.h"
+#include <interrupts.h>
 
 #define BUFFER_SIZE 256
 
@@ -151,6 +152,7 @@ void keyBoardHandler(){
             break;
         case L_SHIFT_PRESS:
         case R_SHIFT_PRESS:
+            printf("SHIFT PRESS", WHITE);
             shiftPressed = 1;
             break;
         case L_SHIFT_RELEASE:
@@ -213,7 +215,7 @@ void keyBoardHandler(){
             if(currentChar == BUFFER_SIZE){
                 currentChar = 0;
             }
-            buffer[bufferIndex++] = keyValues[key][shiftPressed || capsLock];
+            buffer[bufferIndex++] = keyValues[key][capsLock || shiftPressed];
             cantElems++;
        }
     }

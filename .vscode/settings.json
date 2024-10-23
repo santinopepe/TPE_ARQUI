@@ -3,6 +3,9 @@
         "keyboarddriver.h": "c",
         "videodriver.h": "c",
         "sounddriver.h": "c",
-        "usr_syscalls.h": "c"
+        "usr_syscalls.h": "c",
+        "lib.h": "c",
+        "interrupts.h": "c",
+        "defs.h": "c"
     }
 }
