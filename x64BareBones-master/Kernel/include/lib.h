@@ -16,6 +16,5 @@ extern int getMin();
 extern int getHour();
 extern void beep(uint64_t freq);
 extern void stop_beep();
-extern void htl_lib();
 
 #endif

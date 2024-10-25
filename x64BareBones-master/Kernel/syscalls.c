@@ -62,6 +62,7 @@ uint64_t syscallDispatcher(uint64_t nr, uint64_t arg0, uint64_t arg1, uint64_t a
         case TICKS:
             return ticks_elapsed();
         case WAIT:
+            printf("entre", WHITE);
             sys_wait(arg0);
             return 0;
         default:

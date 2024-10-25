@@ -1,4 +1,5 @@
 #include <time.h>
+#include <interrupts.h>
 
 static unsigned long ticks = 0;
 
@@ -15,12 +16,9 @@ int seconds_elapsed() {
 }
 
 void sleep(int seconds) {
-	int called_int = 0;
-	int last_seconds = 0;
-	if(called_int < 3){
-		if(seconds_elapsed() != last_seconds && seconds_elapsed() % seconds == 0){
-			called_int++;
-			last_seconds = seconds_elapsed();
-		}
+	
+	int currentTicks = ticks;
+	while(ticks - currentTicks < seconds * 18) {
+		_hlt();
 	}
 }

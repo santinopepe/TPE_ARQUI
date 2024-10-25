@@ -16,7 +16,7 @@ int main() {
 	char c = 0;
 	while (1)
 	{c = read_char();
-		
+		sysCall_wait(5);
 	
 	}
 	
