@@ -2,3 +2,5 @@
 ARQUI_BUILD.sh
 tp_build
 buildTPE1.sh
+.tgdb*
+.gdb*

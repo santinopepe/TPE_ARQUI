@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-void sysCall_write(char *c, int size, int fd);
+void sysCall_write(int fd, char c);
 
 uint8_t sysCall_read(char * buff);
 

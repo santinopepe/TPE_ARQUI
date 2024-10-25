@@ -159,7 +159,7 @@ picSlaveMask:
 
 _syscallHandler:
 	pushState
-	
+	mov rbp, rsp
 	push r9
 	mov r9, r8
 	mov r8, r10

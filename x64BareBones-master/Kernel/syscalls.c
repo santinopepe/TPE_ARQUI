@@ -24,13 +24,13 @@
 
 
 static void sys_read(uint64_t fd, char * buffer, uint64_t count);
-static void sys_write( char * buffer);
+static void sys_write(uint32_t fd, char buffer);
 static void sys_clear();
 static void sys_seconds(uint64_t * seconds);
 static void sys_minutes(uint64_t * minutes);
 static void sys_hours(uint64_t * hours);
 static void sys_sound();
-static void sys_square(int x, int y, int size, uint32_t hexColor);
+static void sys_square(int x, int y, int height, int width, uint32_t hexColor);
 static uint64_t sys_ticks();
 static void sys_wait();
 
@@ -40,7 +40,7 @@ uint64_t syscallDispatcher(uint64_t nr, uint64_t arg0, uint64_t arg1, uint64_t a
         case READ:
             sys_read(arg0, (char *)arg1, arg2);
         case WRITE:
-            sys_write((char *)arg1);
+            sys_write((uint32_t)arg0, (char)arg1);
             return 0;
         case CLEAR:
             sys_clear();
@@ -57,7 +57,7 @@ uint64_t syscallDispatcher(uint64_t nr, uint64_t arg0, uint64_t arg1, uint64_t a
             sys_sound(arg0, arg1);
             return 0;
         case SQUARE:
-            sys_square(arg0, arg1, arg2, arg3);
+            sys_square(arg0, arg1, arg2, arg3, arg4);
             return 0;
         case TICKS:
             return ticks_elapsed();
@@ -86,8 +86,8 @@ static void sys_read(uint64_t fd, char * buffer, uint64_t count){
     }
 
 }
-static void sys_write(char * buffer){
-    putChar(*buffer, WHITE);
+static void sys_write(uint32_t fd, char buffer){
+    putChar(buffer, WHITE);
 }
 
 static void sys_clear(){
@@ -115,8 +115,8 @@ static void sys_sound(uint64_t time, uint64_t freq){
     stop_beep();
 }
 
-static void sys_square(int x, int y, int size, uint32_t hexColor){
-    putRectangle(x, y, size,size, hexColor);
+static void sys_square(int x, int y, int height, int width, uint32_t hexColor){
+    putRectangle(x, y, height,width, hexColor);
 }
 static uint64_t sys_ticks(){
     return ticks_elapsed();

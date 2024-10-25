@@ -220,11 +220,11 @@ void keyBoardHandler(){
        }
     }
 
-if(key< MAX_PRESS_KEY){ //BORRAR ESTO CAMBIAR BREAK POR RETURN EN BACKSPACE ENTER Y TAB
+/*if(key< MAX_PRESS_KEY){ //BORRAR ESTO CAMBIAR BREAK POR RETURN EN BACKSPACE ENTER Y TAB
     putChar(buffer[bufferIndex-1], WHITE);
     //printf(key,WHITE);
     //imprimo con putChar los valores de las teclas
-    }
+    }*/
     if(snapShotTaken){
        saveState();
        snapShotTaken = 0; 
