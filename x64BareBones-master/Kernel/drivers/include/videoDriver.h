@@ -21,4 +21,3 @@ void putSpace();
 void putRectangle(int x, int y, int height, int width, uint32_t hexColor);
 
 void putChar(char c, uint32_t hexColor);
-

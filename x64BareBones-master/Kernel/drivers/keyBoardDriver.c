@@ -5,7 +5,7 @@
 #include "include/keyBoardDriver.h"
 #include <interrupts.h>
 
-#define BUFFER_SIZE 256
+#define BUFFER_SIZE 1024
 
 extern void saveState(void);
 
@@ -114,8 +114,11 @@ static unsigned char keyValues[KEYS][2] = {
 };
 
 char nextChar(){
-    if(currentChar == cantElems){
+    if(cantElems<=0){
         return -1;
+    }
+    if(currentChar == BUFFER_SIZE){
+        currentChar = 0;
     }
     cantElems--;
     return buffer[currentChar++];
@@ -132,7 +135,7 @@ void keyBoardHandler(){
       return; 
    }
 
-    if(key >= 0 && key <= 256 || keyValues[key][0] != 0){ //verificar la segunda condicion
+    if((key >= 0 && key <= 256) || keyValues[key][0] != 0){ //verificar la segunda condicion
         switch (key)
         {
         case BACKSPACE:

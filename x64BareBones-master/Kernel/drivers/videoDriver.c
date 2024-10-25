@@ -2,7 +2,7 @@
 #include <font.h>
 #include <defs.h>
 
-#define CHAR_WIDTH 9
+#define CHAR_WIDTH 10
 #define CHAR_HEIGHT 32
  
 uint32_t cursorX = 0; 
@@ -52,8 +52,6 @@ typedef struct vbe_mode_info_structure * VBEInfoPtr;
 
 VBEInfoPtr VBE_mode_info = (VBEInfoPtr) 0x0000000000005C00;
 
-static uint64_t posY[100]={0};
-
 
 void putPixel(uint32_t hexColor, uint64_t x, uint64_t y) {
     uint8_t * framebuffer = (uint8_t *) VBE_mode_info->framebuffer;
@@ -89,9 +87,7 @@ void putBackScreen(){
 	}
 }
 
-
 void newLine(){
-	posY[cursorY/CHAR_HEIGHT] = cursorX;
 	cursorX = 0;
 	cursorY += CHAR_HEIGHT;
 	return; 
@@ -137,7 +133,7 @@ void putBackSpace(){
 	}
 	if(cursorX==0){
 		cursorY -= CHAR_HEIGHT;
-		cursorX = posY[cursorY/CHAR_HEIGHT];
+		cursorX = VBE_mode_info->width - CHAR_WIDTH;
 		clearRectangle(cursorX, cursorY, CHAR_HEIGHT,CHAR_WIDTH);
 		return;
 	}
@@ -161,17 +157,26 @@ void putRectangle(int x, int y, int height, int width, uint32_t hexColor){
 	}
 }
 
+static int i =0;
 void putChar(char c, uint32_t hexColor) {
 	int start = c - FIRST_CHAR;
+	
     switch (c) {
         case '\n':
-            newLine();
+			i++;
+			if(i%2==0){
+            	newLine();
+			}
             return;
         case '\t':
             putTab();
             return;
         case '\b':
-            putBackSpace();
+			i++;
+			if(i%2==0){
+				putBackSpace();
+			}
+			
             return;
         case ' ':
             putSpace();

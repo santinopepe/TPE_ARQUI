@@ -4,12 +4,12 @@
 
 char read_char(){
     char buffer[1] = {0};
-    sysCall_read(buffer);
+    sysCall_read(0, buffer, 1);
     return buffer[0];
 }
 
 void putChar(char c, int fd){
-    sysCall_write(1, c);
+    sysCall_write(1, &c);
 }
 
 void puts(const char * str){
@@ -34,7 +34,7 @@ void printNchars(const char * str, int n){
 int scanf(char * buff){
     char c;
     int i = 0;
-    while((c = read_char(buff)) != '\n'){
+    while((c = read_char()) != '\n'){
         buff[i] = c;
         i++;
     }

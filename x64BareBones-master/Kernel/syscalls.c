@@ -24,7 +24,7 @@
 
 
 static void sys_read(uint64_t fd, char * buffer, uint64_t count);
-static void sys_write(uint32_t fd, char buffer);
+static void sys_write(uint32_t fd, char * buffer);
 static void sys_clear();
 static void sys_seconds(uint64_t * seconds);
 static void sys_minutes(uint64_t * minutes);
@@ -40,7 +40,7 @@ uint64_t syscallDispatcher(uint64_t nr, uint64_t arg0, uint64_t arg1, uint64_t a
         case READ:
             sys_read(arg0, (char *)arg1, arg2);
         case WRITE:
-            sys_write((uint32_t)arg0, (char)arg1);
+            sys_write((uint32_t)arg0, (char *)arg1);
             return 0;
         case CLEAR:
             sys_clear();
@@ -86,8 +86,8 @@ static void sys_read(uint64_t fd, char * buffer, uint64_t count){
     }
 
 }
-static void sys_write(uint32_t fd, char buffer){
-    putChar(buffer, WHITE);
+static void sys_write(uint32_t fd, char * buffer){
+    putChar(*buffer, WHITE);
 }
 
 static void sys_clear(){

@@ -3,9 +3,9 @@
 
 #include <stdint.h>
 
-void sysCall_write(int fd, char c);
+void sysCall_write(int fd, char * c);
 
-uint8_t sysCall_read(char * buff);
+uint8_t sysCall_read(int fd, char * buff, int length);
 
 void sysCall_clear();
 

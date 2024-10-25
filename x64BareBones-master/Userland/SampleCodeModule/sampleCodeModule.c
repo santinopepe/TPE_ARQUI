@@ -4,7 +4,6 @@
 /* sampleCodeModule.c */
 
 char * v = (char*)0xB8000;
-char buffer[100]={0};
 
 static int var1 = 0;
 static int var2 = 0;
@@ -12,21 +11,16 @@ static int var2 = 0;
 
 int main() {
 	
+	
 	//sysCall_square(0, 0, 50, 50, 0xFF00); 
 	char c = 0;
 	while (1)
-	{
-		c = read_char();
-		if(c =! 0)
-		{
-			putChar(c, 1);
-		}
-
+	{c = read_char();
 		
+	
 	}
 	
-	
-	
+		
 	/*
 	//Test if BSS is properly set up
 	if (var1 == 0 && var2 == 0)
