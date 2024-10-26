@@ -1,6 +1,6 @@
 #include "include/Usr_Syscalls.h"
 #include <stdarg.h>
-
+#include "include/C_lib.h"
 
 char read_char(){
     char buffer[1] = {0};
@@ -12,12 +12,25 @@ void putChar(char c, int fd){
     sysCall_write(1, &c);
 }
 
+void putColorChar(char c, int fd, uint64_t color){
+    sysCall_ColorWrite(1, &c, color);
+}
+
+void colorPrint(char * str, uint64_t color){
+    int i = 0;
+    while(str[i] != '\0'){
+        putColorChar(str[i], 1, color);
+        i++;
+    }
+}
+
 void puts(const char * str){
     int i = 0;
     while(str[i] != '\0'){
         putChar(str[i], 1);
         i++;
     }
+    putChar('\n', 1);
 }
 
 void printNchars(const char * str, int n){
@@ -31,16 +44,30 @@ void printNchars(const char * str, int n){
 
 //CHEQUEAR
 // devuelvo la cantidad de caracteres leidos
-int scanf(char * buff){
-    char c;
-    int i = 0;
-    while((c = read_char()) != '\n'){
-        buff[i] = c;
-        i++;
+int scanf(char* buffer){
+    int idx = 0;
+    while (1){
+        char c  = read_char();  
+        if (c != -1 && c != 0){
+            if(c == '\b'){
+                if(idx > 0){ 
+                    idx--;
+                }
+            }else if(c == '\n'){ 
+                buffer[idx] = 0;
+                if(buffer[0] != 0){
+                    return 1;
+                }
+                return 0;
+            } else if(c != '\t'){
+                buffer[idx++] = c;
+            }
+        }
     }
-    buff[i] = 0;
-    return i;
+    return -1;
 }
+
+
 
 int atoi(char * str){
     int res = 0;
@@ -58,13 +85,20 @@ void clearScreen(){
 
 int strcmp(const char * str1, const char * str2){
     int i = 0;
+    int tot = 0;
     while(str1[i] != '\0' && str2[i] != '\0'){
-        if(str1[i] != str2[i]){
-            return 0;
-        }
+        tot = str1[i] - str2[i];
         i++;
     }
-    return str1[i] == str2[i];
+    return tot;
+}
+
+int strlen(const char * str){
+    int i = 0;
+    while(str[i] != '\0'){
+        i++;
+    }
+    return i;
 }
 
 void printInt(int num){

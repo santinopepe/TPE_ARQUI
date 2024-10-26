@@ -23,3 +23,7 @@ void putRectangle(int x, int y, int height, int width, uint32_t hexColor);
 void putChar(char c, uint32_t hexColor);
 
 void printRegister(uint64_t value); 
+
+uint64_t getCursorX(); 
+
+void setLetterSize(float size);

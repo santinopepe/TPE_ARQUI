@@ -12,7 +12,7 @@ extern void saveState(void);
 
 static char isKey(uint8_t key);
 
-static char buffer[BUFFER_SIZE];
+static char buffer[BUFFER_SIZE] = {0};
 static int bufferIndex = 0;
 static char shiftPressed = 0;
 static char capsLock = 0;
@@ -153,14 +153,13 @@ void keyBoardHandler(){
         case ESC:
             snapShotTaken = 1;
             break;
+        //PROBLEMAS CON ESTOS CASES    
         case L_SHIFT_PRESS:
         case R_SHIFT_PRESS:
-            printf("SHIFT PRESS", WHITE);
             shiftPressed = 1;
             break;
         case L_SHIFT_RELEASE:
         case R_SHIFT_RELEASE:
-            printf("SHIFT RELEASE", WHITE);
             shiftPressed = 0;
             break;
         case CAPS_LOCK_PRESS:

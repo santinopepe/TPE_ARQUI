@@ -12,6 +12,7 @@ GLOBAL sysCall_ticks
 GLOBAL sysCall_wait
 GLOBAL sysCall_ColorWrite
 GLOBAL sysCall_writeRegs
+GLOBAL sysCall_cursorX
 
 sysCall_read:
     mov rax, 0
@@ -73,3 +74,9 @@ sysCall_writeRegs:
     mov rax, 11
     int 80h
     ret    
+
+sysCall_cursorX:
+    mov rax, 12
+    int 80h
+    ret
+
