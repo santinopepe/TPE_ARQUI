@@ -4,6 +4,8 @@
 #include <lib.h>
 #include <time.h>
 #include <defs.h>
+#include <registers.h>
+#include <interrupts.h>
 
 
 #define STDIN 0
@@ -17,10 +19,11 @@
 #define MINUTES 4
 #define HOURS 5
 #define SOUND 6
-#define SQUARE 7 
+#define RECTANGLE 7 
 #define TICKS 8
 #define WAIT 9
-
+#define COLORWRITE 10
+#define REGISTERS 11
 
 
 static void sys_read(uint64_t fd, char * buffer, uint64_t count);
@@ -30,10 +33,11 @@ static void sys_seconds(uint64_t * seconds);
 static void sys_minutes(uint64_t * minutes);
 static void sys_hours(uint64_t * hours);
 static void sys_sound();
-static void sys_square(int x, int y, int height, int width, uint32_t hexColor);
+static void sys_putRectangle(int x, int y, int height, int width, uint32_t hexColor);
 static uint64_t sys_ticks();
 static void sys_wait();
-
+static void sys_ColorWrite(uint32_t fd, char * buffer, uint32_t color); 
+static void sys_writeReg(); 
 
 uint64_t syscallDispatcher(uint64_t nr, uint64_t arg0, uint64_t arg1, uint64_t arg2, uint64_t arg3, uint64_t arg4, uint64_t arg5){
     switch (nr){
@@ -56,15 +60,20 @@ uint64_t syscallDispatcher(uint64_t nr, uint64_t arg0, uint64_t arg1, uint64_t a
         case SOUND:
             sys_sound(arg0, arg1);
             return 0;
-        case SQUARE:
-            sys_square(arg0, arg1, arg2, arg3, arg4);
+        case RECTANGLE:
+            sys_putRectangle(arg0, arg1, arg2, arg3, arg4);
             return 0;
         case TICKS:
             return ticks_elapsed();
         case WAIT:
-            printf("entre", WHITE);
             sys_wait(arg0);
             return 0;
+        case COLORWRITE:
+            sys_ColorWrite(arg0, (char *)arg1, arg2);
+            return 0;
+        case REGISTERS:
+            sys_writeReg();
+            return 0;    
         default:
             return 0;
     }
@@ -116,8 +125,8 @@ static void sys_sound(uint64_t time, uint64_t freq){
     stop_beep();
 }
 
-static void sys_square(int x, int y, int height, int width, uint32_t hexColor){
-    putRectangle(x, y, height,width, hexColor);
+static void sys_putRectangle(int x, int y, int height, int width, uint32_t hexColor){
+    putRectangle(x, y, height, width, hexColor);
 }
 static uint64_t sys_ticks(){
     return ticks_elapsed();
@@ -126,8 +135,13 @@ static void sys_wait(uint64_t time){
     sleep(time);
 }
 
+static void sys_ColorWrite(uint32_t fd, char * buffer, uint32_t color){
+    putChar(*buffer, color);
+}
 
-
+static void sys_writeReg(){
+    printRegAsm();
+}
 
 
 

@@ -16,12 +16,16 @@ GLOBAL _irq04Handler
 GLOBAL _irq05Handler
 
 GLOBAL _exception0Handler
+GLOBAL printRegAsm
+
+
 
 GLOBAL saveState
 EXTERN syscallDispatcher
 EXTERN irqDispatcher
 EXTERN exceptionDispatcher
 EXTERN keyBoardHandler
+EXTERN printRegisters
 
 SECTION .text
 
@@ -108,6 +112,7 @@ SECTION .text
 	mov [registers+8*16], rax ;Save the instruction pointer
 	mov rax, [rsp+15*8+8]
 	mov [registers+8*17], rax ;Save the flags
+
 %endmacro
 
 
@@ -126,6 +131,11 @@ SECTION .text
 	iretq
 %endmacro
 
+
+printRegAsm:
+	mov qword rdi, registers
+	call printRegisters
+	ret
 
 _hlt:
 	sti
@@ -160,9 +170,10 @@ picSlaveMask:
 _syscallHandler:
 	pushState
 	mov rbp, rsp
+
 	push r9
 	mov r9, r8
-	mov r8, r10
+	mov r8, rcx
 	mov rcx, rdx
 	mov rdx, rsi
 	mov rsi, rdi

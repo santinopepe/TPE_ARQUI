@@ -7,9 +7,11 @@ GLOBAL sysCall_seconds
 GLOBAL sysCall_minutes
 GLOBAL sysCall_hours
 GLOBAL sysCall_sound
-GLOBAL sysCall_square
+GLOBAL sysCall_putRectangle
 GLOBAL sysCall_ticks
 GLOBAL sysCall_wait
+GLOBAL sysCall_ColorWrite
+GLOBAL sysCall_writeRegs
 
 sysCall_read:
     mov rax, 0
@@ -46,7 +48,7 @@ sysCall_sound:
     int 80h
     ret
 
-sysCall_square:
+sysCall_putRectangle:
     mov rax, 7
     int 80h
     ret
@@ -61,3 +63,13 @@ sysCall_wait:
     mov rax, 9
     int 80h
     ret
+
+sysCall_ColorWrite:
+    mov rax, 10
+    int 80h
+    ret
+
+sysCall_writeRegs:
+    mov rax, 11
+    int 80h
+    ret    

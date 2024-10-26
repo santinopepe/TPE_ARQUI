@@ -3,6 +3,7 @@
 #include <defs.h>
 #include <lib.h>
 #include "include/keyBoardDriver.h"
+#include <registers.h>
 #include <interrupts.h>
 
 #define BUFFER_SIZE 1024
@@ -14,7 +15,6 @@ static char isKey(uint8_t key);
 static char buffer[BUFFER_SIZE];
 static int bufferIndex = 0;
 static char shiftPressed = 0;
-static char snapShotTaken = 0;
 static char capsLock = 0;
 static int currentChar = 0; 
 static int cantElems = 0;
@@ -223,14 +223,10 @@ void keyBoardHandler(){
        }
     }
 
-/*if(key< MAX_PRESS_KEY){ //BORRAR ESTO CAMBIAR BREAK POR RETURN EN BACKSPACE ENTER Y TAB
-    putChar(buffer[bufferIndex-1], WHITE);
-    //printf(key,WHITE);
-    //imprimo con putChar los valores de las teclas
-    }*/
-    if(snapShotTaken){
+
+    if(buffer[bufferIndex-1] == '!'){
        saveState();
-       snapShotTaken = 0; 
+       snapShotTaken = 1; 
     }
     
 }

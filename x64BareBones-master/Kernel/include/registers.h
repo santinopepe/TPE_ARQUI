@@ -33,16 +33,13 @@ typedef struct registers_struct{
 // Variable that indicates if a snapshot was taken
 extern char snapShotTaken; 
 
-//extern registers_struct snapshotRegisters;
-
 /**
  * Prints the registers of the CPU
  * 
  * @param registers The registers of the CPU
  */
 //void printRegisters(registers_struct * registers);
-void printRegisters();
-
+void printRegisters(uint64_t * registers);
 
 #endif
 
