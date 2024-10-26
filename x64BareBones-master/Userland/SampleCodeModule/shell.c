@@ -18,7 +18,7 @@ void welcome(){
 
 void help(){
     printf("\n"); 
-    printf("Available commands:\ntime - Shows the current time\n regs - Shows the registers\n  clear - Clears the screen\n set_letterSize - Changes the size of the letters\n game - Starts the game\n help - Shows the available commands\n");
+    printf("Available commands: \n\ntime - Shows the current time\n\nregs - Shows the registers\n\nclear - Clears the screen\n\nset_letterSize - Changes the size of the letters\n\ngame - Starts the game\n\nhelp - Shows the available commands\n\n");
 }
 
 void echo(char * str){
@@ -58,15 +58,25 @@ void scanCommand(char * command) {
     if (command[i] == '\n') {
         return;
     }
-    while (command[i] != ' ' && command[i] != '\0') {
+    // Encontrar el final del comando
+    while (command[i] != ' ' && command[i] != '\0' && command[i] != '\n') {
         i++;
     }
-    command[i++] = '\0';
+    // Separar el comando de sus argumentos
+    char *args = 0;
+    if (command[i] == ' ') {
+        command[i] = '\0';
+        args = command + i + 1;
+    } else {
+        command[i] = '\0';
+    }
+
+    // Buscar el comando en la lista de comandos
     for (int j = 0; j < cantCommands; j++) {
         if (strcmp(command, commands[j]) == 0) {
             switch (j) {
                 case 0:
-                    echo(command + i);
+                    echo(args);
                     break;
                 case 1:
                     time();
@@ -78,7 +88,11 @@ void scanCommand(char * command) {
                     clear();
                     break;
                 case 4:
-                    set_letterSize(atoi(command + i));
+                    if (args != 0) {
+                        set_letterSize(atoi(args));
+                    } else {
+                        printf("Error: Missing argument for set_letterSize\n");
+                    }
                     break;
                 case 5:
                     game();
@@ -87,12 +101,11 @@ void scanCommand(char * command) {
                     help();
                     break;
                 default:
-                    printf("Invalid command\n");
-                    printf("Type 'help' to see the available commands\n");
+                    printf("Error: Command not recognized\n");
                     break;
             }
             return;
         }
     }
-    printf("Command not found\n");
+    printf("Error: Command not recognized\n");
 }

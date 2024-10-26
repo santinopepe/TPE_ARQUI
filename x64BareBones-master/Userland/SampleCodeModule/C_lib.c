@@ -53,7 +53,7 @@ int scanf(char * buffer) {
                 idx--;
             } else if (c == '\n') {
                 buffer[idx] = '\0';
-                return (idx > 0) ? 1 : 0;
+                return idx;
             } else if (c != '\t') {
                 buffer[idx++] = c;
             }
