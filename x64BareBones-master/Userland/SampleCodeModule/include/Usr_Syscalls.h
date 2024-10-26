@@ -27,4 +27,6 @@ void sysCall_ColorWrite(int fd, char * c, uint64_t color);
 
 void sysCall_writeRegs();
 
+uint64_t sysCall_cursorX(); 
+
 #endif

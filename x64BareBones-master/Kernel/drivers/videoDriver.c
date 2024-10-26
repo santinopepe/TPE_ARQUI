@@ -4,6 +4,10 @@
 
 #define CHAR_WIDTH 10
 #define CHAR_HEIGHT 32
+
+#define SIZE 1; 
+
+
  
 uint32_t cursorX = 0; 
 uint32_t cursorY = 0;
@@ -166,9 +170,10 @@ void putChar(char c, uint32_t hexColor) {
     switch (c) {
         case '\n':
 			i++;
-			if(i%2==0){
+			if(i%2==1){
             	newLine();
 			}
+			
             return;
         case '\t':
             putTab();
@@ -240,4 +245,8 @@ void printRegister(uint64_t value){
 	char buffer[65];
 	uintToBase(value, buffer, 16);
 	printf(buffer, WHITE);
+}
+
+uint64_t getCursorX(){
+	return cursorX/CHAR_WIDTH;
 }
