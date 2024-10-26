@@ -13,23 +13,16 @@ void commandLine(){
 }
 
 void welcome(){
-    puts("Welcome to the shell! Type 'help' to see the available commands");
+    printf("Welcome to the shell! Type 'help' to see the available commands\n");
 }
 
 void help(){
     printf("\n"); 
-    puts("Available commands: ");
-    puts("echo <string>: prints the string ");
-    puts("time: prints the current time ");
-    puts("regs: prints the registers ");
-    puts("clear: clears the screen ");
-    puts("set_letterSize <size>: sets the size of the letters ");
-    puts("game: starts a game ");
-    printf("\n");
+    printf("Available commands:\ntime - Shows the current time\n regs - Shows the registers\n  clear - Clears the screen\n set_letterSize - Changes the size of the letters\n game - Starts the game\n help - Shows the available commands\n");
 }
 
 void echo(char * str){
-    puts(str);
+    printf(str);
     putChar('\n', 1);
 }
 
@@ -60,55 +53,46 @@ void game(){
 }
 
 
-void scanCommand(char * command){
-    char * param = 0; // Initialize param to NULL
-    int j = 0;
+void scanCommand(char * command) {
     int i = 0;
-    if(command[i] == '\n'){
+    if (command[i] == '\n') {
         return;
     }
-    while(command[i] != ' '){
+    while (command[i] != ' ' && command[i] != '\0') {
         i++;
     }
     command[i++] = '\0';
-    while (command[i] != '\0' && command[i] != '\n'){ // Change condition to check for '\n'
-        param[j] = command[i];
-        i++;
-        j++;
-    }
-    param[j] = '\0'; // Add null terminator to param
-    
-    for(int i = 0; i < cantCommands; i++){
-        if(strcmp(command, commands[i]) == 0){
-            switch (i)
-            {
-            case 0:
-                echo(param);
-                break;
-            case 1:
-                time();
-                break;
-            case 2:
-                regs();
-                break;
-            case 3:
-                clear();
-                break;
-            case 4:
-                set_letterSize(atoi(param));
-                break;
-            case 5:
-                game();
-                break;
-            case 6:
-                help();
-                break;
-            default:
-                printf("Invalid command\n");
-                printf("Type 'help' to see the available commands\n");
-                break;
+    for (int j = 0; j < cantCommands; j++) {
+        if (strcmp(command, commands[j]) == 0) {
+            switch (j) {
+                case 0:
+                    echo(command + i);
+                    break;
+                case 1:
+                    time();
+                    break;
+                case 2:
+                    regs();
+                    break;
+                case 3:
+                    clear();
+                    break;
+                case 4:
+                    set_letterSize(atoi(command + i));
+                    break;
+                case 5:
+                    game();
+                    break;
+                case 6:
+                    help();
+                    break;
+                default:
+                    printf("Invalid command\n");
+                    printf("Type 'help' to see the available commands\n");
+                    break;
             }
             return;
         }
     }
+    printf("Command not found\n");
 }

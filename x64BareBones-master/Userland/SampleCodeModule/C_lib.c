@@ -44,29 +44,23 @@ void printNchars(const char * str, int n){
 
 //CHEQUEAR
 // devuelvo la cantidad de caracteres leidos
-int scanf(char* buffer){
+int scanf(char * buffer) {
     int idx = 0;
-    while (1){
-        char c  = read_char();  
-        if (c != -1 && c != 0){
-            if(c == '\b'){
-                if(idx > 0){ 
-                    idx--;
-                }
-            }else if(c == '\n'){ 
-                buffer[idx] = 0;
-                if(buffer[0] != 0){
-                    return 1;
-                }
-                return 0;
-            } else if(c != '\t'){
+    while (1) {
+        char c = read_char();
+        if (c != -1 && c != 0) {
+            if (c == '\b' && idx > 0) {
+                idx--;
+            } else if (c == '\n') {
+                buffer[idx] = '\0';
+                return (idx > 0) ? 1 : 0;
+            } else if (c != '\t') {
                 buffer[idx++] = c;
             }
         }
     }
     return -1;
 }
-
 
 
 int atoi(char * str){
@@ -83,14 +77,15 @@ void clearScreen(){
     sysCall_clear();
 }
 
-int strcmp(const char * str1, const char * str2){
+int strcmp(const char * str1, const char * str2) {
     int i = 0;
-    int tot = 0;
-    while(str1[i] != '\0' && str2[i] != '\0'){
-        tot = str1[i] - str2[i];
+    while (str1[i] != '\0' && str2[i] != '\0') {
+        if (str1[i] != str2[i]) {
+            return str1[i] - str2[i];
+        }
         i++;
     }
-    return tot;
+    return str1[i] - str2[i];
 }
 
 int strlen(const char * str){
@@ -124,29 +119,29 @@ void printInt(int num){
     }
 }
 
-static void va_print(const char * str, va_list list){
+
+static void va_print(const char * str, va_list list) {
     int i = 0;
-    while(str[i] != '\0'){
-        if(str[i] == '%'){
+    while (str[i] != '\0') {
+        if (str[i] == '%' && str[i+1] != '\0') {
             i++;
-            switch (str[i])
-            {
-            case 'd':
-                printInt((int)va_arg(list, int));   //CHEQUEAR PQ PRINTINT RECIBE INT
-                break;
-            case 'c':
-                putChar(va_arg(list, int),1);
-                break;
-            case 's':
-                puts(va_arg(list, char *));
-                break;
-            default:
-                putChar(str[i-1],1);
-                putChar(str[i],1);
-                break;
+            switch (str[i]) {
+                case 'd':
+                    printInt(va_arg(list, int));
+                    break;
+                case 'c':
+                    putChar(va_arg(list, int), 1);
+                    break;
+                case 's':
+                    puts(va_arg(list, char *));
+                    break;
+                default:
+                    putChar('%', 1);
+                    putChar(str[i], 1);
+                    break;
             }
-        }else{
-            putChar(str[i],1);
+        } else {
+            putChar(str[i], 1);
         }
         i++;
     }
