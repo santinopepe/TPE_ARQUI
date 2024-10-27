@@ -29,4 +29,12 @@ void sysCall_writeRegs();
 
 uint64_t sysCall_cursorX(); 
 
+uint64_t sysCall_cursorY();
+
+void sysCall_setSize(float size);
+
+uint64_t sysCall_getScreenHeight();
+
+void sysCall_getCharSize(int * width, int * height);
+
 #endif

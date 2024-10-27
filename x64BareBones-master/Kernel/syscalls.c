@@ -25,6 +25,10 @@
 #define COLORWRITE 10
 #define REGISTERS 11
 #define CURSORX 12
+#define CURSORY 13
+#define SET_SIZE 14
+#define SCREEN_HEIGHT 15
+#define GET_SIZE 16
 
 
 static void sys_read(uint64_t fd, char * buffer, uint64_t count);
@@ -77,6 +81,16 @@ uint64_t syscallDispatcher(uint64_t nr, uint64_t arg0, uint64_t arg1, uint64_t a
             return 0; 
         case CURSORX:
             return getCursorX();   
+        case CURSORY:
+            return getCursorY();
+        case SET_SIZE:
+            setLetterSize(arg0);
+            return 0;
+        case SCREEN_HEIGHT:
+            return getScreenHeight();
+        case GET_SIZE:
+            getCharSize((int *)arg0, (int *)arg1);
+            return 0;
         default:
             return 0;
     }

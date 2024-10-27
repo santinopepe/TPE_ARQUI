@@ -2,7 +2,7 @@
 #include "C_lib.h"
 #include "Usr_Syscalls.h"
 
-char * commands[] = {"echo", "time", "regs", "clear", "set_letterSize", "game", "help"};
+char * commands[] = {"echo", "time", "regs", "clear", "size", "game", "help"};
 static int cantCommands = 7;
 static int limit = 6; 
 
@@ -18,7 +18,7 @@ void welcome(){
 
 void help(){
     printf("\n"); 
-    printf("Available commands: \n\ntime - Shows the current time\n\nregs - Shows the registers\n\nclear - Clears the screen\n\nset_letterSize - Changes the size of the letters\n\ngame - Starts the game\n\nhelp - Shows the available commands\n\n");
+    printf("Available commands: \n\ntime - Shows the current time\n\nregs - Shows the registers\n\nclear - Clears the screen\n\nsize - Changes the size of the letters\n\ngame - Starts the game\n\nhelp - Shows the available commands\n\n");
 }
 
 void echo(char * str){
@@ -45,13 +45,44 @@ void clear(){
 }
 
 void set_letterSize(float size){
-
+    sysCall_setSize(size);
 }
 
 void game(){
 
 }
 
+void cursor(){  
+        int height;
+        int width;
+        sysCall_getCharSize(&width, &height);
+
+
+        uint64_t x = sysCall_cursorX() * width;
+        uint64_t y = sysCall_cursorY() * height;
+        
+
+        sysCall_putRectangle(x, y, 32, 5, 0x000000);
+        sysCall_wait(1);   
+        sysCall_putRectangle(x, y, 32, 5, 0xFFFFFF);
+        
+        
+}
+
+void scanLine(){
+    char buffer[1024] = {0};
+    commandLine();
+    while (1) {
+        int i = scanf(buffer);
+        if (i > 0 && buffer[0] != '\n') {  
+            scanCommand(buffer);
+        }
+        commandLine();
+        for (int j = 0; j < 1024; j++) {
+            buffer[j] = 0;
+        }
+    }
+}
 
 void scanCommand(char * command) {
     int i = 0;
@@ -89,7 +120,7 @@ void scanCommand(char * command) {
                     break;
                 case 4:
                     if (args != 0) {
-                        set_letterSize(atoi(args));
+                        set_letterSize(atoi(args)); //NO FUNCIONA
                     } else {
                         printf("Error: Missing argument for set_letterSize\n");
                     }

@@ -10,7 +10,8 @@ char snapShotTaken = 0;
 
 void printRegisters(uint64_t * registers){
 	if(snapShotTaken == 0){
-		printf("No se tomo un snapshot", RED);
+		newLine();
+		printf("No se tomo un snapshot, Recuerde presionar '!' (debe usar capslock)", RED);
 		return;
 	}
 	for (int i = 0; i < 18; i++){
@@ -19,4 +20,5 @@ void printRegisters(uint64_t * registers){
 		printRegister(registers[i]);
 		newLine();
 	}
+	snapShotTaken = 0;
 }

@@ -153,7 +153,7 @@ void keyBoardHandler(){
         case ESC:
             snapShotTaken = 1;
             break;
-        //PROBLEMAS CON ESTOS CASES    
+        /* 
         case L_SHIFT_PRESS:
         case R_SHIFT_PRESS:
             shiftPressed = 1;
@@ -162,6 +162,7 @@ void keyBoardHandler(){
         case R_SHIFT_RELEASE:
             shiftPressed = 0;
             break;
+        */
         case CAPS_LOCK_PRESS:
             capsLock = 1-capsLock;
             break;   

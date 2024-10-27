@@ -27,3 +27,9 @@ void printRegister(uint64_t value);
 uint64_t getCursorX(); 
 
 void setLetterSize(float size);
+
+uint64_t getCursorY();
+
+uint64_t getScreenHeight(); 
+
+void getCharSize(int * width, int * height);

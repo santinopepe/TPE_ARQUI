@@ -13,6 +13,12 @@ GLOBAL sysCall_wait
 GLOBAL sysCall_ColorWrite
 GLOBAL sysCall_writeRegs
 GLOBAL sysCall_cursorX
+GLOBAL sysCall_cursorY
+GLOBAL sysCall_setSize
+GLOBAL sysCall_screeHeight
+GLOBAL sysCall_getCharSize
+GLOBAL sysCall_se
+
 
 sysCall_read:
     mov rax, 0
@@ -80,3 +86,22 @@ sysCall_cursorX:
     int 80h
     ret
 
+sysCall_cursorY:
+    mov rax, 13
+    int 80h
+    ret
+
+sysCall_setSize:
+    mov rax, 14
+    int 80h
+    ret
+
+sysCall_screeHeight:
+    mov rax, 15
+    int 80h
+    ret
+
+sysCall_getCharSize:
+    mov rax, 16
+    int 80h
+    ret

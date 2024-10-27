@@ -2,8 +2,8 @@
 #include <font.h>
 #include <defs.h>
 
-#define CHAR_WIDTH 10
-#define CHAR_HEIGHT 32
+static int CHAR_WIDTH = 10; 
+static int CHAR_HEIGHT = 32;
 
 #define SIZE 1; 
 
@@ -249,4 +249,22 @@ void printRegister(uint64_t value){
 
 uint64_t getCursorX(){
 	return cursorX/CHAR_WIDTH;
+}
+
+void setLetterSize(float size){
+	CHAR_WIDTH = CHAR_WIDTH * size;
+	CHAR_HEIGHT = CHAR_HEIGHT * size;
+}
+
+void getCharSize(int * width, int * height){
+	*width = CHAR_WIDTH;
+	*height = CHAR_HEIGHT;
+}
+
+uint64_t getCursorY(){
+	return cursorY/CHAR_HEIGHT;
+}
+
+uint64_t getScreenHeight(){
+	return VBE_mode_info->height;
 }
