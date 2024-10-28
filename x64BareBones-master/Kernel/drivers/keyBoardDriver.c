@@ -141,18 +141,18 @@ void keyBoardHandler(){
         case BACKSPACE:
             buffer[bufferIndex++] = '\b';
             cantElems++;
-            break;
+            return;
         case ENTER:
             buffer[bufferIndex++] = '\n';
             cantElems++;
-            break;
+            return;
         case TAB:
             buffer[bufferIndex++] = '\t';
             cantElems++;
-            break; 
+            return; 
         case ESC:
             snapShotTaken = 1;
-            break;
+            return;
         /* 
         case L_SHIFT_PRESS:
         case R_SHIFT_PRESS:

@@ -55,7 +55,8 @@ int scanf(char * buffer) {
                 buffer[idx] = '\0';
                 return idx;
             } else if (c != '\t') {
-                buffer[idx++] = c;
+                buffer[idx] = c;
+                idx++;
             }
         }
     }

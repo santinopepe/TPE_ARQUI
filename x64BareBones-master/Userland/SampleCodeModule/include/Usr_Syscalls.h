@@ -31,7 +31,7 @@ uint64_t sysCall_cursorX();
 
 uint64_t sysCall_cursorY();
 
-void sysCall_setSize(float size);
+void sysCall_setSize(int size);
 
 uint64_t sysCall_getScreenHeight();
 

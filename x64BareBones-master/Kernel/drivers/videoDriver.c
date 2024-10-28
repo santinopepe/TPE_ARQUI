@@ -169,21 +169,13 @@ void putChar(char c, uint32_t hexColor) {
 	
     switch (c) {
         case '\n':
-			i++;
-			if(i%2==1){
-            	newLine();
-			}
-			
+			newLine();
             return;
         case '\t':
             putTab();
             return;
         case '\b':
-			i++;
-			if(i%2==0){
-				putBackSpace();
-			}
-			
+			putBackSpace();			
             return;
         case ' ':
             putSpace();
@@ -251,9 +243,9 @@ uint64_t getCursorX(){
 	return cursorX/CHAR_WIDTH;
 }
 
-void setLetterSize(float size){
-	CHAR_WIDTH = CHAR_WIDTH * size;
-	CHAR_HEIGHT = CHAR_HEIGHT * size;
+void setLetterSize(int size){
+	CHAR_WIDTH =  size + 32;
+	CHAR_HEIGHT = size + 10;
 }
 
 void getCharSize(int * width, int * height){

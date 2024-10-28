@@ -62,6 +62,7 @@ uint64_t syscallDispatcher(uint64_t nr, uint64_t arg0, uint64_t arg1, uint64_t a
             return 0;
         case HOURS:
             sys_hours((uint64_t *)arg0);
+            return 0;
         case SOUND:
             sys_sound(arg0, arg1);
             return 0;
@@ -84,7 +85,7 @@ uint64_t syscallDispatcher(uint64_t nr, uint64_t arg0, uint64_t arg1, uint64_t a
         case CURSORY:
             return getCursorY();
         case SET_SIZE:
-            setLetterSize(arg0);
+            setLetterSize((int)arg0);
             return 0;
         case SCREEN_HEIGHT:
             return getScreenHeight();

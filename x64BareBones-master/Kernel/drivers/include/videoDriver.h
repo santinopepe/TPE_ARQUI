@@ -26,7 +26,7 @@ void printRegister(uint64_t value);
 
 uint64_t getCursorX(); 
 
-void setLetterSize(float size);
+void setLetterSize(int size);
 
 uint64_t getCursorY();
 

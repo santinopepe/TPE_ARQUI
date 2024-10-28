@@ -18,7 +18,7 @@ void welcome(){
 
 void help(){
     printf("\n"); 
-    printf("Available commands: \n\ntime - Shows the current time\n\nregs - Shows the registers\n\nclear - Clears the screen\n\nsize - Changes the size of the letters\n\ngame - Starts the game\n\nhelp - Shows the available commands\n\n");
+    printf("Available commands: \ntime - Shows the current time\nregs - Shows the registers\nclear - Clears the screen\nsize - Changes the size of the letters\ngame - Starts the game\nhelp - Shows the available commands\n");
 }
 
 void echo(char * str){
