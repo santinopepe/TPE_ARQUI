@@ -37,4 +37,10 @@ uint64_t sysCall_getScreenHeight();
 
 void sysCall_getCharSize(int * width, int * height);
 
+void sysCall_Cursor();
+
+int getDate(int date);
+
+int sysCall_snapshotState(); 
+
 #endif

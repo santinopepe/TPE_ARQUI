@@ -10,7 +10,6 @@
 
 extern void saveState(void);
 
-static char isKey(uint8_t key);
 
 static char buffer[BUFFER_SIZE] = {0};
 static int bufferIndex = 0;
@@ -124,9 +123,6 @@ char nextChar(){
     return buffer[currentChar++];
 }
 
-static char isKey(uint8_t key){
-    return (key >= 0x3B && key <= 0x44) || key == 0x57 || key == 0x58;
-}
 
 void keyBoardHandler(){
     uint64_t key = getKey();

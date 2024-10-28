@@ -1,14 +1,13 @@
 #include "include/videoDriver.h"
 #include <font.h>
 #include <defs.h>
+#include <time.h>
 
 static int CHAR_WIDTH = 10; 
 static int CHAR_HEIGHT = 32;
 
 #define SIZE 1; 
 
-
- 
 uint32_t cursorX = 0; 
 uint32_t cursorY = 0;
 
@@ -58,7 +57,7 @@ VBEInfoPtr VBE_mode_info = (VBEInfoPtr) 0x0000000000005C00;
 
 
 void putPixel(uint32_t hexColor, uint64_t x, uint64_t y) {
-    uint8_t * framebuffer = (uint8_t *) VBE_mode_info->framebuffer;
+    uint8_t * framebuffer = (uint8_t *) VBE_mode_info->framebuffer; //Preguntar como sacar este warning
     uint64_t offset = (x * ((VBE_mode_info->bpp)/8)) + (y * VBE_mode_info->pitch);
     framebuffer[offset]     =  (hexColor) & 0xFF;
     framebuffer[offset+1]   =  (hexColor >> 8) & 0xFF; 
@@ -139,7 +138,7 @@ void putBackSpace(){
 	}
 	if(cursorX==0){
 		cursorY -= CHAR_HEIGHT;
-		cursorX = VBE_mode_info->width - CHAR_WIDTH;
+		cursorX = VBE_mode_info->width-CHAR_WIDTH/2;
 		clearRectangle(cursorX, cursorY, CHAR_HEIGHT,CHAR_WIDTH);
 		return;
 	}
@@ -163,7 +162,6 @@ void putRectangle(int x, int y, int height, int width, uint32_t hexColor){
 	}
 }
 
-static int i =0;
 void putChar(char c, uint32_t hexColor) {
 	int start = c - FIRST_CHAR;
 	
@@ -244,6 +242,7 @@ uint64_t getCursorX(){
 }
 
 void setLetterSize(int size){
+	putChar(size + '0', 0xFFFFFF);
 	CHAR_WIDTH =  size + 32;
 	CHAR_HEIGHT = size + 10;
 }
@@ -258,5 +257,11 @@ uint64_t getCursorY(){
 }
 
 uint64_t getScreenHeight(){
-	return VBE_mode_info->height;
+	return VBE_mode_info->height/CHAR_HEIGHT;
+}
+
+void cursor(){
+	putRectangle(cursorX, cursorY, 32, 5, 0x000000);
+	sleep(1);
+	putRectangle(cursorX, cursorY, 32, 5, 0xFFFFFF);
 }

@@ -29,6 +29,8 @@
 #define SET_SIZE 14
 #define SCREEN_HEIGHT 15
 #define GET_SIZE 16
+#define CURSOR 17
+#define SNAPSHOT_STATE 18
 
 
 static void sys_read(uint64_t fd, char * buffer, uint64_t count);
@@ -48,6 +50,7 @@ uint64_t syscallDispatcher(uint64_t nr, uint64_t arg0, uint64_t arg1, uint64_t a
     switch (nr){
         case READ:
             sys_read(arg0, (char *)arg1, arg2);
+            return 0; 
         case WRITE:
             sys_write((uint32_t)arg0, (char *)arg1);
             return 0;
@@ -92,6 +95,11 @@ uint64_t syscallDispatcher(uint64_t nr, uint64_t arg0, uint64_t arg1, uint64_t a
         case GET_SIZE:
             getCharSize((int *)arg0, (int *)arg1);
             return 0;
+        case CURSOR:
+            cursor();
+            return 0;
+        case SNAPSHOT_STATE:
+            return snapShotTaken;    
         default:
             return 0;
     }

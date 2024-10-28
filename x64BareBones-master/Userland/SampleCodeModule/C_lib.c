@@ -46,8 +46,14 @@ void printNchars(const char * str, int n){
 // devuelvo la cantidad de caracteres leidos
 int scanf(char * buffer) {
     int idx = 0;
+    int yUserPos = sysCall_cursorY();
+    int yPos = yUserPos;
     while (1) {
         char c = read_char();
+        if(c == '\b' && sysCall_cursorX() <= 7 && sysCall_cursorY() == yUserPos){
+            continue;
+        }   
+        putChar(c, 1);
         if (c != -1 && c != 0) {
             if (c == '\b' && idx > 0) {
                 idx--;

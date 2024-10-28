@@ -10,13 +10,13 @@ char snapShotTaken = 0;
 
 void printRegisters(uint64_t * registers){
 	if(snapShotTaken == 0){
-		newLine();
 		printf("No se tomo un snapshot, Recuerde presionar '!' (debe usar capslock)", RED);
+		newLine();
 		return;
 	}
 	for (int i = 0; i < 18; i++){
 		printf(regs[i], WHITE);
-		printf(": ", WHITE);
+		printf(" = 0x", WHITE);
 		printRegister(registers[i]);
 		newLine();
 	}

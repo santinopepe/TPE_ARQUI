@@ -33,3 +33,5 @@ uint64_t getCursorY();
 uint64_t getScreenHeight(); 
 
 void getCharSize(int * width, int * height);
+
+void cursor(); 

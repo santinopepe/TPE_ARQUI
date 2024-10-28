@@ -4,9 +4,14 @@
 
 char * commands[] = {"echo", "time", "regs", "clear", "size", "game", "help"};
 static int cantCommands = 7;
-static int limit = 6; 
 
+char dateStr[9] = {0};
+char timeStr[9] = {0};
 
+static unsigned int decode(unsigned int time); 
+static uint32_t uintToBase(uint64_t value, char * buffer, uint32_t base); 
+static char * getTime(); 
+static char  * date(); 
 void commandLine(){
     colorPrint("$User", COLOR_GREEN);
     colorPrint(": ", COLOR_PURPLE);
@@ -17,29 +22,46 @@ void welcome(){
 }
 
 void help(){
-    printf("\n"); 
+    if(sysCall_getScreenHeight() < sysCall_cursorY() + 6){
+        clear();
+        commandLine();
+        printf("help\n");
+    }
     printf("Available commands: \ntime - Shows the current time\nregs - Shows the registers\nclear - Clears the screen\nsize - Changes the size of the letters\ngame - Starts the game\nhelp - Shows the available commands\n");
 }
 
 void echo(char * str){
-    printf(str);
-    putChar('\n', 1);
+    if(sysCall_getScreenHeight() < sysCall_cursorY() - 1){
+        clear();
+        commandLine();
+        printf("echo", str);
+    }
+    puts(str);
 }
 
 void time(){
-    int sec = 0;
-    int min = 0;
-    int hours = 0;
-    sysCall_seconds(&sec);
-    sysCall_minutes(&min);
-    sysCall_hours(&hours);
-    printf("Current time: %d:%d:%d\n", sec, min, hours);
+    if(sysCall_getScreenHeight() <  sysCall_cursorY() + 1){
+        clear();
+        commandLine();
+        printf("time\n");
+        
+    }
+    printf("Current time: %s", getTime());
+    printf("Current date: %s", date());
+    
 }
 
 void regs(){
+    if((sysCall_getScreenHeight() < sysCall_cursorY() + 18 && sysCall_snapshotState() == 1) || (sysCall_snapshotState() == 0 && sysCall_getScreenHeight() < sysCall_cursorY())){
+        clear();
+        commandLine();
+        printf("regs\n");
+        
+        
+    }
     sysCall_writeRegs();
 }
-
+ 
 void clear(){
     sysCall_clear();
 }
@@ -52,21 +74,8 @@ void game(){
 
 }
 
-void cursor(){  
-        int height;
-        int width;
-        sysCall_getCharSize(&width, &height);
-
-
-        uint64_t x = sysCall_cursorX() * width;
-        uint64_t y = sysCall_cursorY() * height;
-        
-
-        sysCall_putRectangle(x, y, 32, 5, 0x000000);
-        sysCall_wait(1);   
-        sysCall_putRectangle(x, y, 32, 5, 0xFFFFFF);
-        
-        
+void cursor(){
+    sysCall_Cursor();
 }
 
 void scanLine(){
@@ -77,11 +86,14 @@ void scanLine(){
         if (i > 0 && buffer[0] != '\n') {  
             scanCommand(buffer);
         }
-        commandLine();
+        if(sysCall_cursorY() > sysCall_getScreenHeight() - 1){
+            clear();
+        }
+        commandLine();  
         for (int j = 0; j < 1024; j++) {
             buffer[j] = 0;
-        }
-    }
+    }  
+    }  
 }
 
 void scanCommand(char * command) {
@@ -101,7 +113,10 @@ void scanCommand(char * command) {
     } else {
         command[i] = '\0';
     }
-
+    if(command[0] == '!'){ //Por ahi habria que hacer una sys call que chequee
+        printf("Taking snapshot...\n");
+        return; 
+    }
     // Buscar el comando en la lista de comandos
     for (int j = 0; j < cantCommands; j++) {
         if (strcmp(command, commands[j]) == 0) {
@@ -109,7 +124,7 @@ void scanCommand(char * command) {
                 case 0:
                     echo(args);
                     break;
-                case 1:
+                case 1: 
                     time();
                     break;
                 case 2:
@@ -120,6 +135,7 @@ void scanCommand(char * command) {
                     break;
                 case 4:
                     if (args != 0) {
+                        printf("Setting letter size to %d\n", atoi(args));
                         set_letterSize(atoi(args)); //NO FUNCIONA
                     } else {
                         printf("Error: Missing argument for set_letterSize\n");
@@ -139,4 +155,74 @@ void scanCommand(char * command) {
         }
     }
     printf("Error: Command not recognized\n");
+}
+
+void buildDateStr(char * dateStr, int data){
+    if(data < 10){
+        dateStr[0] = '0';
+        uintToBase(data, dateStr + 1, 10);
+    } else{
+        uintToBase(data, dateStr, 10);
+    }
+}
+
+
+char * getTime(){
+    int hours = decode(getDate(HOURS));
+    int minutes = decode(getDate(MINUTES));
+
+    buildDateStr(timeStr, hours);
+    timeStr[2] = ':';
+    buildDateStr(timeStr + 3, minutes);
+
+    return timeStr;
+}
+
+char * date(){
+    int day = decode(getDate(DAY));
+    int month = decode(getDate(MONTH));
+    int year = decode(getDate(YEAR));
+
+    buildDateStr(dateStr, day);
+    dateStr[2] = '/';
+    buildDateStr(dateStr + 3, month);
+    dateStr[5] = '/';
+    buildDateStr(dateStr + 6, year);
+    return dateStr;
+}
+
+static unsigned int decode(unsigned int time){
+    return (time >> 4) * 10 + (time & 0xF);
+}
+
+static uint32_t uintToBase(uint64_t value, char * buffer, uint32_t base){
+	char *p = buffer;
+	char *p1, *p2;
+	uint32_t digits = 0;
+
+	//Calculate characters for each digit
+	do
+	{
+		uint32_t remainder = value % base;
+		*p++ = (remainder < 10) ? remainder + '0' : remainder + 'A' - 10;
+		digits++;
+	}
+	while (value /= base);
+
+	// Terminate string in buffer.
+	*p = 0;
+
+	//Reverse string in buffer.
+	p1 = buffer;
+	p2 = p - 1;
+	while (p1 < p2)
+	{
+		char tmp = *p1;
+		*p1 = *p2;
+		*p2 = tmp;
+		p1++;
+		p2--;
+	}
+
+	return digits;
 }

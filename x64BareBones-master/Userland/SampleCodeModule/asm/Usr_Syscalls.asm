@@ -15,10 +15,11 @@ GLOBAL sysCall_writeRegs
 GLOBAL sysCall_cursorX
 GLOBAL sysCall_cursorY
 GLOBAL sysCall_setSize
-GLOBAL sysCall_screeHeight
+GLOBAL sysCall_getScreenHeight
 GLOBAL sysCall_getCharSize
-GLOBAL sysCall_se
-
+GLOBAL sysCall_Cursor
+GLOBAL getDate
+GLOBAL sysCall_snapshotState
 
 sysCall_read:
     mov rax, 0
@@ -60,7 +61,6 @@ sysCall_putRectangle:
     int 80h
     ret
 
-
 sysCall_ticks:
     mov rax, 8
     int 80h
@@ -96,12 +96,34 @@ sysCall_setSize:
     int 80h
     ret
 
-sysCall_screeHeight:
+sysCall_getScreenHeight:
     mov rax, 15
     int 80h
     ret
 
 sysCall_getCharSize:
     mov rax, 16
+    int 80h
+    ret
+
+sysCall_Cursor:
+    mov rax, 17
+    int 80h
+    ret
+
+getDate: 
+    push rbp
+    mov rbp, rsp
+
+    mov rax, rdi
+    out 70h, al
+    xor rax, rax
+    in al, 71h
+
+    mov rsp, rbp
+    pop rbp
+    ret
+sysCall_snapshotState:
+    mov rax, 18
     int 80h
     ret
