@@ -2,6 +2,7 @@
 #include "C_lib.h"
 #include "Usr_Syscalls.h"
 #include <exceptions.h>
+#include "snake.h"
 
 char * commands[] = {"echo", "time", "regs", "clear", "size", "game", "help", "divideBy0", "invalidOp"};
 static int cantCommands = 9;
@@ -75,7 +76,7 @@ void set_letterSize(float size){
 }
 
 void game(){
-
+    play();
 }
 
 void cursor(){
