@@ -13,7 +13,9 @@
 Player player1, player2;
 
 static char board[SCREEN_WIDTH][SCREEN_HEIGHT] = {0}; //position table
-static char reward = 0; //falg to know if there is a reward on the board
+static char reward = 1; //falg to know if there is a reward on the board
+
+void drawTrain(Player player);
 
 void move2Player(char c){
     switch(c){
@@ -103,7 +105,7 @@ void drawReward(){
     uint64_t ticks = sysCall_ticks();
     int x = ticks % (SCREEN_WIDTH-SQUARE_SIZE);
     int y = ticks % (SCREEN_HEIGHT-100);
-    board[x][y] = 1;
+    board[x][y] = 3;
     sysCall_putRectangle(x, y, SQUARE_SIZE, SQUARE_SIZE, 0x00FF0000);
     reward = 1;
 }
@@ -129,6 +131,8 @@ int initialize(){
     player1.inc_x = 1;
     player1.inc_y = 0;
     player1.points = 4;
+    player1.positions[0][0] = player1.x;
+    player1.positions[0][1] = player1.y;
 
     if(nro_players > 1){
         player2.x = 400;
@@ -136,26 +140,91 @@ int initialize(){
         player2.inc_x = 1;
         player2.inc_y = 0;
         player2.points = 0;
+        player2.positions[0][0] = player2.x;
+        player2.positions[0][1] = player2.y;
     }
     return nro_players;
     
 }
+/*
+void searchWagon(int x, int y, char * vec){
+    // Direcciones relativas para los 8 cuadrados adyacentes
+    int directions[8][2] = {
+        {-1, -1}, {-1, 0}, {-1, 1},
+        {0, -1},         {0, 1},
+        {1, -1}, {1, 0}, {1, 1}
+    };
+
+    for (int i = 0; i < 8; i++) {
+        int new_x = x + directions[i][0];
+        int new_y = y + directions[i][1];
+
+        // Verificar si la nueva posición está dentro de los límites
+        if (!OUT_OF_BOUNDS(new_x, new_y)) {
+            if (board[new_x][new_y] == 1) { 
+                vec[0] = new_x;
+                vec[1] = new_y;
+                return;
+            }
+        }
+    }
+    
+}*/
+
+
 
 void update(char players){
-    player1.x += player1.inc_x;
-    player1.y += player1.inc_y;
+     int tail_x = player1.positions[player1.points - 1][0];
+    int tail_y = player1.positions[player1.points - 1][1];
 
-    if(OUT_OF_BOUNDS(player1.x, player1.y)){
+    // Mover las posiciones de la serpiente
+    for (int i = player1.points - 1; i > 0; i--) {
+        player1.positions[i][0] = player1.positions[i - 1][0];
+        player1.positions[i][1] = player1.positions[i - 1][1];
+    }
+
+    // Actualizar la posición de la cabeza
+    player1.x += player1.inc_x*SQUARE_SIZE;
+    player1.y += player1.inc_y*SQUARE_SIZE;
+    player1.positions[0][0] = player1.x;
+    player1.positions[0][1] = player1.y;
+
+    // Verificar si la serpiente ha comido una recompensa
+    if (board[player1.x][player1.y] == 3) {
+        player1.points++;
+        reward = 0;
+    } else {
+        // Poner en 0 la posición anterior de la cola
+        board[tail_x][tail_y] = 0;
+    }
+
+    // Verificar si está fuera de los límites
+    if (OUT_OF_BOUNDS(player1.x, player1.y)) {
         player1.points = -1;
     }
 
+    // Actualizar el tablero con la nueva posición de la serpiente
+    for (int i = 0; i < player1.points; i++) {
+        board[player1.positions[i][0]][player1.positions[i][1]] = 1;
+    }
+
+
+
+    // FALTA HACER TODO PARA 2 JUGADORES
     if(players == 2){
         player2.x += player2.inc_x;
         player2.y += player2.inc_y;
 
+        if (board[player2.x][player2.y] == 1)
+        {
+            player2.points++;
+            reward = 0;
+        }
+        
         if(OUT_OF_BOUNDS(player2.x, player2.y)){
         player2.points = -1;
         }
+        board[player2.x][player2.y] = 2;
     }  
 }
 
@@ -174,6 +243,13 @@ void putBackScreen(){
 		square++;
 	}
 }
+
+
+void wait(){
+    uint64_t ticks = sysCall_ticks();
+    while(sysCall_ticks() - ticks < 10);
+}
+
 
 void play(){
     clearScreen();
@@ -195,16 +271,17 @@ void play(){
             move2Player(c);
         }
 
+        update(players);
+        wait();
+        drawTrain(player1);
+        if(players == 2){
+            drawTrain(player2);
+        }
         if(reward == 0){
             drawReward();
         }
+
         
-        update(players);
-        drawTrain(player1.points, player1.x, player1.y);
-        
-        if(players == 2){
-            drawTrain(player2.points, player2.x, player2.y);
-        }
 
         if(player1.points == -1 || player2.points == -1){
             clearScreen();
@@ -230,23 +307,23 @@ void play(){
 }
 
 
-void drawLocomotive(int x, int y) {
+void drawLocomotive(int x, int y)  {
     // Locomotora del tren 
-    sysCall_putRectangle(x + 17, y, 11, 22, 0x00FFFFFF); // Cuerpo de la locomotora
-    sysCall_putRectangle(x, y + 11, 11, 45, 0x00FFFFFF); // Frente de la locomotora
+    sysCall_putRectangle(x + 17, y, 11, SQUARE_SIZE-17, 0x00FFFFFF); // Cuerpo de la locomotora
+    sysCall_putRectangle(x, y + 11, 11, SQUARE_SIZE, 0x00FFFFFF); // Frente de la locomotora
     sysCall_putRectangle(x + 3, y, 11, 6, 0x00FFFFFF); // Techo de la locomotora
 
     // Ventanas de la locomotora
-    sysCall_putRectangle(x + 22, y + 3, 6, 6, 0x00000000);  // Ventana 3
+    sysCall_putRectangle(x + 20, y + 3, 6, 6, 0x00000000);  // Ventana 3
     
     // Ruedas de la locomotora
     sysCall_putRectangle(x + 6, y + 22, 6, 6, 0x00000000);  // Rueda izquierda
-    sysCall_putRectangle(x + 28, y + 22, 6, 6, 0x00000000);  // Rueda derecha
+    sysCall_putRectangle(x + 24, y + 22, 6, 6, 0x00000000);  // Rueda derecha
 } 
 
 void drawWagon(int x, int y) {
     // Primer vagón del tren bala
-    sysCall_putRectangle(x, y, 22, 45, 0x00FFFFFF); // Cuerpo del primer vagón
+    sysCall_putRectangle(x, y, 22, SQUARE_SIZE, 0x00FFFFFF); // Cuerpo del primer vagón
 
     // Ventanas del primer vagón
     sysCall_putRectangle(x + 6, y + 3, 6, 6, 0x00000000);  // Ventana 1
@@ -256,15 +333,15 @@ void drawWagon(int x, int y) {
 
     // Ruedas del primer vagón
     sysCall_putRectangle(x + 6, y + 22, 6, 6, 0x00000000);  // Rueda izquierda
-    sysCall_putRectangle(x + 28, y + 22, 6, 6, 0x00000000);  // Rueda derecha
+    sysCall_putRectangle(x + 24, y + 22, 6, 6, 0x00000000);  // Rueda derecha
 }
 
 
-void drawTrain(int size, int x, int y) {
+void drawTrain(Player player) {
     putBackScreen();
-  
-    drawLocomotive(x, y+SQUARE_SIZE);
-    for(int i = 1; i <= size; i++){
-        drawWagon(x+i*SQUARE_SIZE, y+SQUARE_SIZE);
+
+    drawLocomotive(player.x, player.y+SQUARE_SIZE);
+    for(int i = 1; i < player.points; i++){
+        drawWagon(player.positions[i][0]+i*SQUARE_SIZE, player.positions[i][1]+SQUARE_SIZE);
     }
 }

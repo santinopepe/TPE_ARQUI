@@ -1,13 +1,7 @@
 #include <stdint.h>
 
-void drawTrain(int size, int x, int y);
 void play();
 
-typedef struct wagon{
-    int x;
-    int y;
-    struct wagon* next;
-} Wagon;
 
 typedef struct {
     int x;
@@ -15,5 +9,5 @@ typedef struct {
     int inc_x;
     int inc_y;
     int points;
-    Wagon* wagons; // Lista dinámica de vagones
+    int positions[1000][2]; // Matriz para almacenar las posiciones de la serpiente
 } Player;
