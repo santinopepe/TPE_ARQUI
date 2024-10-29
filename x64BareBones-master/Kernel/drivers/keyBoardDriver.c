@@ -162,44 +162,6 @@ void keyBoardHandler(){
         case CAPS_LOCK_PRESS:
             capsLock = 1-capsLock;
             break;   
-        /*  
-        case UPPER_ARROW_PRESS:
-            buffer[bufferIndex++] = 0;
-            buffer[bufferIndex++] = 0;
-            buffer[bufferIndex++] = 0;
-            buffer[bufferIndex++] = 0;
-            
-            putChar('^', WHITE);
-            //cantElems += 4;
-            break;  
-        case LOWER_ARROW_PRESS:
-            buffer[bufferIndex++] = 0;
-            buffer[bufferIndex++] = 0;
-            buffer[bufferIndex++] = 0;
-            buffer[bufferIndex++] = 0;
-            
-            putChar('v', WHITE);
-            //cantElems += 4;
-            break;
-        case LEFT_ARROW_PRESS:
-            buffer[bufferIndex++] = 0;
-            buffer[bufferIndex++] = 0;
-            buffer[bufferIndex++] = 0;
-            buffer[bufferIndex++] = 0;
-            
-            putChar('<', WHITE);
-            //cantElems += 4;
-            break;
-        case RIGHT_ARROW_PRESS:
-            buffer[bufferIndex++] = 0;
-            buffer[bufferIndex++] = 0;
-            buffer[bufferIndex++] = 0;
-            buffer[bufferIndex++] = 0;
-            
-            putChar('>', WHITE);
-            //cantElems += 4;
-            break;
-            */
         default:
             break;
        }
