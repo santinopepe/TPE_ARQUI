@@ -1,6 +1,7 @@
 #include "include/C_lib.h"
 #include "include/Usr_Syscalls.h"
 #include "include/shell.h"
+#include "include/exceptions.h"
 
 /* sampleCodeModule.c */
 
@@ -13,7 +14,6 @@ static int var2 = 0;
 
 int main() {
     welcome();
- 
 	while (1)
 	{
 		scanLine();

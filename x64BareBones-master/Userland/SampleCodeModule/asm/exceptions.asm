@@ -1,8 +1,8 @@
-GLOBAL divideByZero
-GLOBAL invalidOpCode
 
 
 section .text
+GLOBAL divideByZero
+GLOBAL invalidOpCode
 
 divideByZero:
     mov rax, 0
@@ -10,5 +10,5 @@ divideByZero:
     ret
 
 invalidOpCode:
-    db 0xFF, 0xFF
+    rtpmc
     ret

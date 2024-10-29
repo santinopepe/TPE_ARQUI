@@ -2,6 +2,8 @@
 #include "include/snake.h"
 #include "include/Usr_Syscalls.h"
 
+#include <stdint.h>
+
 #define SCREEN_WIDTH 1024
 #define SCREEN_HEIGHT 768
 #define SQUARE_SIZE 32
@@ -10,86 +12,127 @@
 
 Player player1, player2;
 
-void move2Player(){
-    char c = read_char();
+static char board[SCREEN_WIDTH][SCREEN_HEIGHT] = {0}; //position table
+static char reward = 0; //falg to know if there is a reward on the board
+
+void move2Player(char c){
     switch(c){
         case 'w':
-            player1.inc_x = 0;
-            player1.inc_y = -1;
+            if(player1.inc_y != 1){
+                player1.inc_x = 0;
+                player1.inc_y = -1;
+            }
             break;
         case 's':
-            player1.inc_x = 0;
-            player1.inc_y = 1;
+            if(player1.inc_y != -1){
+                player1.inc_x = 0;
+                player1.inc_y = 1;
+            }
             break;
         case 'a':
-            player1.inc_x = -1;
-            player1.inc_y = 0;
+            if(player1.inc_x != 1){
+                player1.inc_x = -1;
+                player1.inc_y = 0;
+            }
             break;
         case 'd':
-            player1.inc_x = 1;
-            player1.inc_y = 0;
+            if(player1.inc_x != -1){
+                player1.inc_x = 1;
+                player1.inc_y = 0;
+            }
             break;
         case 'i': //player 2
-            player2.inc_x = 0;
-            player2.inc_y = -1;
+            if (player2.inc_y != 1)
+            {
+                player2.inc_x = 0;
+                player2.inc_y = -1;
+            }
             break;
         case 'k':
-            player2.inc_x = 0;
-            player2.inc_y = 1;
+            if (player2.inc_y != -1)
+            {
+                player2.inc_x = 0;
+                player2.inc_y = 1;
+            }        
             break;
         case 'j':
-            player2.inc_x = -1;
-            player2.inc_y = 0;
+            if(player2.inc_x != 1){
+                player2.inc_x = -1;
+                player2.inc_y = 0;
+            }
             break;
         case 'l':
-            player2.inc_x = 1;
-            player2.inc_y = 0;
+            if(player2.inc_x != -1){
+                player2.inc_x = 1;
+                player2.inc_y = 0;
+            }
             break;
     }
 }
 
-void move1Player(){
-    char c = read_char();
+void move1Player(char c){
     switch(c){
-        case 'w':
-            player1.inc_x = 0;
-            player1.inc_y = -1;
+         case 'w':
+            if(player1.inc_y != 1){
+                player1.inc_x = 0;
+                player1.inc_y = -1;
+            }
             break;
         case 's':
-            player1.inc_x = 0;
-            player1.inc_y = 1;
+            if(player1.inc_y != -1){
+                player1.inc_x = 0;
+                player1.inc_y = 1;
+            }
             break;
         case 'a':
-            player1.inc_x = -1;
-            player1.inc_y = 0;
+            if(player1.inc_x != 1){
+                player1.inc_x = -1;
+                player1.inc_y = 0;
+            }
             break;
         case 'd':
-            player1.inc_x = 1;
-            player1.inc_y = 0;
+            if(player1.inc_x != -1){
+                player1.inc_x = 1;
+                player1.inc_y = 0;
+            }
             break;
     }
+}
+
+void drawReward(){
+    uint64_t ticks = sysCall_ticks();
+    int x = ticks % (SCREEN_WIDTH-SQUARE_SIZE);
+    int y = ticks % (SCREEN_HEIGHT-100);
+    board[x][y] = 1;
+    sysCall_putRectangle(x, y, SQUARE_SIZE, SQUARE_SIZE, 0x00FF0000);
+    reward = 1;
 }
 
 int initialize(){
     printf("How many players? (1 or 2)\n");
-    char nro_players='0';
-    while(nro_players!= '0'){
+    printf("Press 'q' to exit\n");
+    char nro_players=0;
+    while(nro_players == 0){
         nro_players= read_char();
     }
-    if(nro_players != 1 || nro_players != 2){
+    if(nro_players == 'q'){
+        return -1;
+    }
+    nro_players -= '0';
+    if(nro_players != 1 && nro_players != 2){
         printf("Invalid number of players\n");
         return -1;
     }
 
-    player1.x = 10;
-    player1.y = 10;
+    player1.x = 200;
+    player1.y = 200;
     player1.inc_x = 1;
     player1.inc_y = 0;
-    player1.points = 0;
+    player1.points = 4;
 
     if(nro_players > 1){
-        player2.x = 20;
-        player2.y = 20;
+        player2.x = 400;
+        player2.y = 200;
         player2.inc_x = 1;
         player2.inc_y = 0;
         player2.points = 0;
@@ -98,23 +141,25 @@ int initialize(){
     
 }
 
-void update(){
+void update(char players){
     player1.x += player1.inc_x;
     player1.y += player1.inc_y;
-
-    player2.x += player2.inc_x;
-    player2.y += player2.inc_y;
 
     if(OUT_OF_BOUNDS(player1.x, player1.y)){
         player1.points = -1;
     }
 
-    if(OUT_OF_BOUNDS(player2.x, player2.y)){
+    if(players == 2){
+        player2.x += player2.inc_x;
+        player2.y += player2.inc_y;
+
+        if(OUT_OF_BOUNDS(player2.x, player2.y)){
         player2.points = -1;
-    }
+        }
+    }  
 }
 
-void putBackScreen(){//chequear
+void putBackScreen(){
 	int square = 0;
     sysCall_putRectangle(0, 0, 100,  SCREEN_WIDTH,0x00FFFFFF);
     for (int y = 100; y < SCREEN_HEIGHT; y += SQUARE_SIZE) {
@@ -134,27 +179,54 @@ void play(){
     clearScreen();
     char c=0;
     char players = initialize();
+    clearScreen();
+    if (players == -1)
+    {
+        printf("Game exited\n");
+        return;
+    }
     putBackScreen();
     while(c!='q'){ //DESP SE PUEDE CAMBIAR POR ESC
         c = read_char();
 
         if(players == 1){
-            move1Player();
+            move1Player(c);
         }else{
-            move2Player();
+            move2Player(c);
         }
 
-        update();
-
-        if(player1.points == -1){
-            printf("Player 1 lost\n");
-            initialize();
+        if(reward == 0){
+            drawReward();
         }
-        if(player2.points == -1){
-            printf("Player 2 lost\n");
-            initialize();   
+        
+        update(players);
+        drawTrain(player1.points, player1.x, player1.y);
+        
+        if(players == 2){
+            drawTrain(player2.points, player2.x, player2.y);
+        }
+
+        if(player1.points == -1 || player2.points == -1){
+            clearScreen();
+            if (player1.points == -1)
+            {
+                printf("Player 1 lost\n");
+            } else{
+                printf("Player 2 lost\n");
+            }
+            
+            players = initialize();
+            if (players == -1)
+            {
+                clearScreen();
+                printf("Game exited\n");
+                return;
+            }   
         }
     }
+    clearScreen();
+    printf("Game exited\n");
+    return;
 }
 
 
