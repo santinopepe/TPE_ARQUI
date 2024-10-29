@@ -240,9 +240,19 @@ static uint32_t uintToBase(uint64_t value, char * buffer, uint32_t base){
 
 
 static void invalidOpException(){
+    if(sysCall_getScreenHeight() <= sysCall_cursorY() + 23){
+        clear();
+        commandLine();
+        printf("invalidOp\n");
+    }
     invalidOpCode();
 }
 
 static void divideByZeroException(){
+    if(sysCall_getScreenHeight() <= sysCall_cursorY() + 23){
+        clear();
+        commandLine();
+        printf("divideBy0\n");
+    }
     divideByZero();
 }

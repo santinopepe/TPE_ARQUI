@@ -26,7 +26,8 @@ EXTERN irqDispatcher
 EXTERN exceptionDispatcher
 EXTERN keyBoardHandler
 EXTERN printRegisters
-EXTERN load_main
+EXTERN getStackBase
+EXTERN retUserland
 SECTION .text
 
 %macro pushState 0
@@ -125,11 +126,16 @@ SECTION .text
 	mov rdi, %1 ; pasaje de parametro
 	call exceptionDispatcher
 
-	
-	popState
-	add rsp, 8 ;Remove the error code from the stack
 
+	popState
+	;add rsp, 8 ;Remove the error code from the stack
+	call getStackBase
+	sub rax, 20h
+	mov qword [rsp+8*3], rax
+	call retUserland
+	mov qword [rsp], rax
 	iretq
+	
 %endmacro
 
 
@@ -231,7 +237,7 @@ _exception0Handler:
 
 ;Invalid Opcode Exception
 _exception01Handler:
-	exceptionHandler 1
+	exceptionHandler 6
 
 
 haltcpu:
