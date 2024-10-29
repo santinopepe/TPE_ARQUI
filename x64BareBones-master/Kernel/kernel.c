@@ -39,6 +39,10 @@ void * getStackBase()
 	);
 }
 
+void * retUserland(){
+	return sampleCodeModuleAddress;
+}
+
 void * initializeKernelBinary()
 {
 	void * moduleAddresses[] = {

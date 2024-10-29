@@ -20,11 +20,11 @@ void exceptionDispatcher(int exception) {
 static void zero_division() {
 	printf("Zero division exception\n", RED);
 	printRegAsm();
-	printf("\n Regresando a la shell...\n", RED);
+	printf("\n Returning to shell...\n", RED);
 }
 
 static void invalid_op_code() {
 	printf("Invalid op code exception\n", RED);
 	printRegAsm();
-	printf("\n Regresando a la shell...\n", RED);	
+	printf("\n Returning to shell...\n", RED);	
 }

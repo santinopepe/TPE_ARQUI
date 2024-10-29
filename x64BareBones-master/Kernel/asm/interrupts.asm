@@ -26,7 +26,7 @@ EXTERN irqDispatcher
 EXTERN exceptionDispatcher
 EXTERN keyBoardHandler
 EXTERN printRegisters
-
+EXTERN load_main
 SECTION .text
 
 %macro pushState 0
@@ -125,6 +125,7 @@ SECTION .text
 	mov rdi, %1 ; pasaje de parametro
 	call exceptionDispatcher
 
+	
 	popState
 	add rsp, 8 ;Remove the error code from the stack
 

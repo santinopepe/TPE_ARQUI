@@ -1,9 +1,10 @@
 #include "shell.h"
 #include "C_lib.h"
 #include "Usr_Syscalls.h"
+#include <exceptions.h>
 
-char * commands[] = {"echo", "time", "regs", "clear", "size", "game", "help"};
-static int cantCommands = 7;
+char * commands[] = {"echo", "time", "regs", "clear", "size", "game", "help", "divideBy0", "invalidOp"};
+static int cantCommands = 9;
 
 char dateStr[9] = {0};
 char timeStr[9] = {0};
@@ -12,6 +13,9 @@ static unsigned int decode(unsigned int time);
 static uint32_t uintToBase(uint64_t value, char * buffer, uint32_t base); 
 static char * getTime(); 
 static char  * date(); 
+static void invalidOpException();
+static void divideByZeroException();
+
 void commandLine(){
     colorPrint("$User", COLOR_GREEN);
     colorPrint(": ", COLOR_PURPLE);
@@ -22,12 +26,12 @@ void welcome(){
 }
 
 void help(){
-    if(sysCall_getScreenHeight() < sysCall_cursorY() + 6){
+    if(sysCall_getScreenHeight() < sysCall_cursorY() + 8){
         clear();
         commandLine();
         printf("help\n");
     }
-    printf("Available commands: \ntime - Shows the current time\nregs - Shows the registers\nclear - Clears the screen\nsize - Changes the size of the letters\ngame - Starts the game\nhelp - Shows the available commands\n");
+    printf("Available commands: \ntime - Shows the current time\nregs - Shows the registers\nclear - Clears the screen\nsize - Changes the size of the letters\ngame - Starts the game\nhelp - Shows the available commands\ndivideBy0 - Throws a divide by zero exception\ninvalidOp - Throws an invalid operation exception\n");
 }
 
 void echo(char * str){
@@ -147,6 +151,12 @@ void scanCommand(char * command) {
                 case 6:
                     help();
                     break;
+                case 7:
+                    divideByZeroException();
+                    break;
+                case 8:
+                    invalidOpException();
+                    break;
                 default:
                     printf("Error: Command not recognized\n");
                     break;
@@ -225,4 +235,13 @@ static uint32_t uintToBase(uint64_t value, char * buffer, uint32_t base){
 	}
 
 	return digits;
+}
+
+
+static void invalidOpException(){
+    invalidOpCode();
+}
+
+static void divideByZeroException(){
+    divideByZero();
 }
