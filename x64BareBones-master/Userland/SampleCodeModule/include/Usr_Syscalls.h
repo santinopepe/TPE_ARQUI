@@ -15,7 +15,7 @@ void sysCall_minutes(int * min);
 
 void sysCall_hours(int * hours);
 
-void sysCall_sound(uint64_t freq, uint64_t time);
+void sysCall_sound(uint64_t time, uint64_t freq);
 
 void sysCall_putRectangle(uint16_t x, uint16_t y, uint16_t width, uint16_t height, uint64_t color);
 
