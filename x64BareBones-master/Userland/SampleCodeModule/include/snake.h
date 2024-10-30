@@ -9,5 +9,5 @@ typedef struct {
     int inc_x;
     int inc_y;
     int points;
-    int positions[1000][2]; // Matriz para almacenar las posiciones de la serpiente
+    int positions[100][2]; // Matriz para almacenar las posiciones de la serpiente
 } Player;
