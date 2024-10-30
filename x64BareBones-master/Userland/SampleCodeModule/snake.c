@@ -10,6 +10,10 @@
 #define SCREEN_HEIGHT 768
 #define SQUARE_SIZE 32
 
+#define BLACK 0x00000000
+#define RED 0x00FF0000
+#define GREEN 0x0000FF00
+
 #define OUT_OF_BOUNDS(x, y) ((x) >= SCREEN_WIDTH || (x) <= 0 || (y) >= (SCREEN_HEIGHT) || (y) <= 100) 
 #define NEAR_REWARD(x, y) ( (((x) <= rewardPos[0] + 10) && ((x) >= rewardPos[0] - 10)) && (((y) <= rewardPos[1] + 10) && ((y) >= rewardPos[1] - 10)) )
 
@@ -124,45 +128,39 @@ void drawReward(){
     sysCall_putRectangle(x, y, SQUARE_SIZE, SQUARE_SIZE, 0x00FF0000);
     reward = 1;
 }
+void initializePlayer(Player * player){
+    (*player).x = 200;
+    (*player).y = 200;
+    (*player).inc_x = 1;
+    (*player).inc_y = 0;
+    (*player).points = 1;
+    (*player).positions[0][0] = (*player).x;
+    (*player).positions[0][1] = (*player).y;
+}
 
 int initialize(){
     printf("How many players? (1 or 2)\n");
     printf("Press 'q' to exit\n");
-    char nro_players=0;
-    while(nro_players == 0){
-        nro_players= read_char();
+    int nro_players = 0;
+    while(nro_players != 1 && nro_players != 2){
+        nro_players=0;
+        while(nro_players == 0){
+            nro_players= read_char();
+        }
+        if(nro_players == 'q'){
+            return -1;
+        }
+        nro_players -= '0';
+        if(nro_players != 1 && nro_players != 2){
+            printf("Invalid number of players\n");
+        }
     }
-    if(nro_players == 'q'){
-        return -1;
-    }
-    nro_players -= '0';
-    if(nro_players != 1 && nro_players != 2){
-        printf("Invalid number of players\n");
-        return -1;
-    }
+    
 
-    player1.positions[0][0] = player1.x;
-    player1.positions[0][1] = player1.y;
+    initializePlayer(&player1);
 
-    player2.positions[0][0] = player2.x;
-    player2.positions[0][1] = player2.y;
-
-    player1.x = 200;
-    player1.y = 200;
-    player1.inc_x = 1;
-    player1.inc_y = 0;
-    player1.points = 1;
-    player1.positions[0][0] = player1.x;
-    player1.positions[0][1] = player1.y;
-
-    if(nro_players > 1){
-        player2.x = 400;
-        player2.y = 200;
-        player2.inc_x = 1;
-        player2.inc_y = 0;
-        player2.points = 0;
-        player2.positions[0][0] = player2.x;
-        player2.positions[0][1] = player2.y;
+    if(nro_players ==2){
+        initializePlayer(&player2);
     }
     return nro_players;
     
@@ -170,25 +168,25 @@ int initialize(){
 
 
 
-void update(char players){
-    int tail_x = player1.positions[player1.points - 1][0];
-    int tail_y = player1.positions[player1.points - 1][1];
+void update(Player * player){
+    int tail_x = (*player).positions[(*player).points - 1][0];
+    int tail_y = (*player).positions[(*player).points - 1][1];
 
     // Mover las posiciones de la serpiente
-    for (int i = player1.points - 1; i > 0; i--) {
-        player1.positions[i][0] = player1.positions[i - 1][0];
-        player1.positions[i][1] = player1.positions[i - 1][1];
+    for (int i = (*player).points - 1; i > 0; i--) {
+        (*player).positions[i][0] = (*player).positions[i - 1][0];
+        (*player).positions[i][1] = (*player).positions[i - 1][1];
     }
 
     // Actualizar la posición de la cabeza
-    player1.x += player1.inc_x*SQUARE_SIZE;
-    player1.y += player1.inc_y*SQUARE_SIZE;
-    player1.positions[0][0] = player1.x;
-    player1.positions[0][1] = player1.y;
+    (*player).x += (*player).inc_x*SQUARE_SIZE;
+    (*player).y += (*player).inc_y*SQUARE_SIZE;
+    (*player).positions[0][0] = (*player).x;
+    (*player).positions[0][1] = (*player).y;
 
     // Verificar si la serpiente ha comido una recompensa
-    if (reward && NEAR_REWARD(player1.x, player1.y)) {
-        player1.points++;
+    if (reward && NEAR_REWARD((*player).x, (*player).y)) {
+        (*player).points++;
         reward = 0;
     } else {
         // Poner en 0 la posición anterior de la cola
@@ -196,33 +194,14 @@ void update(char players){
     }
 
     // Verificar si está fuera de los límites
-    if (OUT_OF_BOUNDS(player1.x, player1.y) || board[player1.x][player1.y] == 1) {
-        player1.points = -1;
+    if (OUT_OF_BOUNDS((*player).x, (*player).y) || board[(*player).x][(*player).y] == 1) {
+        (*player).points = -1;
     }
 
     // Actualizar el tablero con la nueva posición de la serpiente
-    for (int i = 0; i < player1.points; i++) {
-        board[player1.positions[i][0]][player1.positions[i][1]] = 1;
+    for (int i = 0; i < (*player).points; i++) {
+        board[(*player).positions[i][0]][(*player).positions[i][1]] = 1;
     }
-
-
-
-    // FALTA HACER TODO PARA 2 JUGADORES
-    if(players == 2){
-        player2.x += player2.inc_x;
-        player2.y += player2.inc_y;
-
-        if (board[player2.x][player2.y] == 1)
-        {
-            player2.points++;
-            reward = 0;
-        }
-        
-        if(OUT_OF_BOUNDS(player2.x, player2.y)){
-        player2.points = -1;
-        }
-        board[player2.x][player2.y] = 2;
-    }  
 }
 
 void putBackScreen(){
@@ -241,12 +220,17 @@ void putBackScreen(){
 	}
 }
 
-
 void wait(){
     uint64_t ticks = sysCall_ticks();
-    while(sysCall_ticks() - ticks < 10);
+    while(sysCall_ticks() - ticks < 5);
 }
 
+void putPoints(int points){
+    //colorPrint("Points: ", BLACK);
+    sysCall_putRectangle(0, 0, 100, 100, BLACK);
+    printf("Points: ");
+    printInt(points);
+}
 
 void play(){
     clearScreen();
@@ -258,46 +242,69 @@ void play(){
         printf("Game exited\n");
         return;
     }
+
     putBackScreen();
-    while(c!='q'){ //DESP SE PUEDE CAMBIAR POR ESC
+
+    while(c!='q'){ 
         c = read_char();
-
-        if(players == 1){
+        if (players == 1){
             movePlayer(c);
-        }else{
-            movePlayer(c);
-        }
 
-        update(players);
-        wait();
-        drawTrain(player1);
-        if(players == 2){
-            drawTrain(player2);
-        }
-        if(reward == 0){
-            drawReward();
-        }
-
-        
-
-        if(player1.points == -1 || player2.points == -1){
-            clearScreen();
-            if (player1.points == -1)
-            {
-                printf("Player 1 lost\n");
-            } else{
-                printf("Player 2 lost\n");
+            update(&player1);
+            wait();
+            putBackScreen();
+            drawTrain(player1);
+            putPoints(player1.points);            
+            if(reward == 0){
+                drawReward();
             }
-            
-            players = initialize();
-            if (players == -1)
-            {
+            if(player1.points == -1){
                 clearScreen();
-                printf("Game exited\n");
-                return;
-            }   
+                if (player1.points == -1)
+                {
+                    printf("Player lost\n");
+                } 
+                
+                players = initialize();
+                if (players == -1)
+                {
+                    clearScreen();
+                    printf("Game exited\n");
+                    return;
+                }   
+            }
+        } else{
+            movePlayer(c);
+
+            update(&player1);
+            update(&player2);
+            wait();
+            putBackScreen();
+            drawTrain(player1);
+            drawTrain(player2);
+            if(reward == 0){
+                drawReward();
+            }
+            if(player1.points == -1 || player2.points == -1){
+                clearScreen();
+                if (player1.points == -1)
+                {
+                    printf("Player 1 lost\n");
+                } else{
+                    printf("Player 2 lost\n");
+                }
+                
+                players = initialize();
+                if (players == -1)
+                {
+                    clearScreen();
+                    printf("Game exited\n");
+                    return;
+                }   
+            }
         }
     }
+    
     clearScreen();
     printf("Game exited\n");
     return;
@@ -335,8 +342,7 @@ void drawWagon(int x, int y) {
 
 
 void drawTrain(Player player) {
-    putBackScreen();
-    sysCall_putRectangle(rewardPos[0], rewardPos[1],SQUARE_SIZE, SQUARE_SIZE, 0x00FF0000);
+    sysCall_putRectangle(rewardPos[0], rewardPos[1],SQUARE_SIZE, SQUARE_SIZE, RED);
     drawLocomotive(player.x, player.y);
     for(int i = 1; i < player.points; i++){
         drawWagon(player.positions[i][0], player.positions[i][1]);
