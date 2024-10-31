@@ -20,6 +20,7 @@ GLOBAL sysCall_getCharSize
 GLOBAL sysCall_Cursor
 GLOBAL getDate
 GLOBAL sysCall_snapshotState
+GLOBAL sysCall_setCursor
 
 sysCall_read:
     mov rax, 0
@@ -125,5 +126,10 @@ getDate:
     ret
 sysCall_snapshotState:
     mov rax, 18
+    int 80h
+    ret
+
+sysCall_setCursor:
+    mov rax, 19
     int 80h
     ret

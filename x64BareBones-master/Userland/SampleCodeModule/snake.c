@@ -21,10 +21,12 @@
 #define PURPLE 0x008A2BE2
 #define WHITE 0x00FFFFFF
 #define LIGHT_BLUE 0x0065adc9
+#define SILVER 0xC0C0C0
 
 #define OUT_OF_BOUNDS(x, y) ((x) >= SCREEN_WIDTH || (x) <= 0 || (y) >= (SCREEN_HEIGHT) || (y) <= 100) 
 #define NEAR_REWARD(x, y) ( (((x) <= rewardPos[0] + 10) && ((x) >= rewardPos[0] - 10)) && (((y) <= rewardPos[1] + 10) && ((y) >= rewardPos[1] - 10)) )
 
+#define MAX_WAGONS 100
 
 typedef struct Player{
     int x;
@@ -32,24 +34,34 @@ typedef struct Player{
     int inc_x;
     int inc_y;
     int points;
-    int positions[100][2]; // Matriz para almacenar las posiciones de la serpiente
+    int positions[MAX_WAGONS][2]; // Matriz para almacenar las posiciones de la serpiente
     uint64_t color;
+    char lost;
 } Player;
 
 Player player1, player2;
 
 static char board[SCREEN_WIDTH][SCREEN_HEIGHT] = {0}; //position table
 static char reward = 1; //falg to know if there is a reward on the board
+static int difficulty = 7; //difficulty of the game
 
 static int rewardPos[2] = {320,228 }; //reward position
 
-static Player snakeP1 = {200, 200, 1, 0, 0, {{0}}};
-static Player snakeP2 = {400, 400, 1, 0, 0, {{0}}};
 
 void drawTrain(Player player);
-
+void drawReward();
+void update(Player * player);
+void movePlayer(char c);
+void putBackScreen();
+void wait();
+void drawPoints(int player);
+void play();
+void initializePlayer(Player * player, int nroPlayers);
+int initialize();
+void newRewardPos();
 void chooseColor(Player * player); 
-
+void chooseDificulty();
+void initializeVector(Player * player);
 
 void movePlayer(char c){
     switch(c){
@@ -129,6 +141,13 @@ void drawReward(){
     sysCall_putRectangle(rewardPos[0], rewardPos[1], SQUARE_SIZE, SQUARE_SIZE, RED);
 }
 
+void initializeVector(Player * player){
+    for (int i = 0; i < MAX_WAGONS; i++) {
+        (*player).positions[i][0] = 0;
+        (*player).positions[i][1] = 0;
+    }
+}
+
 void initializePlayer(Player * player, int nroPlayers){
 
     (*player).x =  5*SQUARE_SIZE;
@@ -142,6 +161,8 @@ void initializePlayer(Player * player, int nroPlayers){
     (*player).inc_x = 1;
     (*player).inc_y = 0;
     (*player).points = 1;
+    (*player).lost = 0;
+    initializeVector(player);
     (*player).positions[0][0] = (*player).x;
     (*player).positions[0][1] = (*player).y;
 }
@@ -176,13 +197,40 @@ int initialize(){
         wait();
     }    
 
-
+    chooseDificulty();
     return nro_players;
+}
+
+void chooseDificulty(){
+    printf("Choose the difficulty of the game:\n Options: 1. Easy 2. Medium 3. Hard\n");
+    char dif;
+    do {
+        dif = 0; 
+        while (dif == 0) {
+            dif = read_char();
+        }
+        switch (dif) {
+            case '1':
+                difficulty = 10;
+                break;
+            case '2':
+                difficulty = 7;
+                break;
+            case '3':
+                difficulty = 5;
+                break;
+            case 'q':
+                return;
+            default:
+                printf("Invalid difficulty\n");
+            break;     
+        }
+    } while (dif != '1' && dif != '2' && dif != '3'); 
 }
 
 
 void chooseColor(Player * player){
-    printf("Chose the color for your train:\n Options: 1. Red 2. Green 3. Blue 4. Pink 5. Purple 6. Yellow 7. Orange\n");
+    printf("Choose the color for your train:\n Options: 1. Red 2. Green 3. Blue 4. Pink 5. Purple 6. Yellow 7. Orange\n");
     char color;
     do {
         color = 0; 
@@ -246,14 +294,14 @@ void update(Player * player){
         sysCall_sound(1, 500);
         (*player).points++;
         reward = 0;
-    } else {
+    } 
         // Poner en 0 la posición anterior de la cola
         board[tail_x][tail_y] = 0;
-    }
+    
 
     // Verificar si está fuera de los límites
     if (OUT_OF_BOUNDS((*player).x, (*player).y) || board[(*player).x][(*player).y] == 1 ) {
-        (*player).points = -1;
+        (*player).lost =1;
     }
 
     // Actualizar el tablero con la nueva posición de la serpiente
@@ -264,7 +312,7 @@ void update(Player * player){
 
 void putBackScreen(){
 	int square = 0;
-    sysCall_putRectangle(0, 0, 100,  SCREEN_WIDTH,0x00FFFFFF);
+    sysCall_putRectangle(0, 0, 100,  SCREEN_WIDTH, SILVER);
     for (int y = 100; y < SCREEN_HEIGHT; y += SQUARE_SIZE) {
         for (int x = 0; x < SCREEN_WIDTH; x += SQUARE_SIZE) {
             if (square % 2 == 0){
@@ -280,17 +328,26 @@ void putBackScreen(){
 
 void wait(){
     uint64_t ticks = sysCall_ticks();
-    while(sysCall_ticks() - ticks < 7);
+    while(sysCall_ticks() - ticks < difficulty);
 }
 
-void putPoints(int points){
-    //colorPrint("Points: ", BLACK);
-    sysCall_putRectangle(0, 0, 100, 100, BLACK);
-    printf("Points: ");
-    printInt(points);
+void drawPoints(int player){
+    if (player == 1){
+        sysCall_setCursor(0, 0);
+        printf("                Player 1\n");
+        printf("                Points: %d", player1.points-1);
+    }else if (player == 2){
+       sysCall_setCursor(0, 0);
+        printf("                Player 1                Player 2\n");
+        printf("                Points: %d              Points: %d", player1.points-1, player2.points-1);
+    } 
+    
 }
 
 void play(){
+    int letterWidth, letterHeight;
+    sysCall_getCharSize(&letterWidth, &letterHeight);
+    sysCall_setSize(1);
     clearScreen();
     char c=0;
     char players = initialize();
@@ -312,16 +369,19 @@ void play(){
             putBackScreen();
             drawTrain(player1);
             drawReward(); 
-            putPoints(player1.points);            
+
+            drawPoints(1);   
+
             if(reward == 0){
                 newRewardPos();
                 drawReward();
             }
-            if(player1.points == -1){
+            if(player1.lost == 1){
                 clearScreen();
-                if (player1.points == -1 || players == -1)
+                if (player1.lost == 1 || players == -1)
                 {
                     printf("You lost\n");
+                    printf("Points: %d\n", player1.points-1);
                     printf("Game exited\n");
                     return; 
                 }    
@@ -334,19 +394,22 @@ void play(){
             putBackScreen();
             drawTrain(player1);
             drawTrain(player2);
+            drawPoints(2);
             drawReward();
             if(reward == 0){
                 newRewardPos();
                 drawReward();
             }
-            if(player1.points == -1 || player2.points == -1){
+            if(player1.lost == 1 || player2.lost == 1){
                 clearScreen();
-                if (player1.points == -1)
+                if (player1.lost == 1)
                 {
                     printf("Player 1 lost\n");
                 } else{
                     printf("Player 2 lost\n");
                 }
+                printf("Player 1 points : %d\n", player1.points-1);
+                printf("Player 2 points : %d\n", player2.points-1);
                 printf("Game exited\n");
                 return;
             }
@@ -354,6 +417,7 @@ void play(){
     }
     clearScreen();
     printf("Game exited\n");
+    sysCall_setSize(letterHeight-SQUARE_SIZE);
     return;
 }
 
@@ -363,7 +427,7 @@ void play(){
 
 
 
-void drawLocomotive(int x, int y, uint64_t color) {
+void drawLocomotiveLeft(int x, int y, uint64_t color) {
     // Locomotora del tren 
     sysCall_putRectangle(x + 17, y, 11, SQUARE_SIZE-17, color); // Cuerpo de la locomotora
     sysCall_putRectangle(x, y + 11, 11, SQUARE_SIZE, color); // Frente de la locomotora
@@ -376,6 +440,52 @@ void drawLocomotive(int x, int y, uint64_t color) {
     sysCall_putRectangle(x + 6, y + 22, 6, 6, 0x00000000);  // Rueda izquierda
     sysCall_putRectangle(x + 24, y + 22, 6, 6, 0x00000000);  // Rueda derecha
 } 
+
+void drawLocomotiveRight(int x, int y, uint64_t color) {
+    // Cuerpo de la locomotora
+    sysCall_putRectangle(x, y, 11, SQUARE_SIZE - 17, color); // Cuerpo
+    // Frente de la locomotora
+    sysCall_putRectangle(x , y + 11, 11, SQUARE_SIZE, color); // Frente
+    // Techo de la locomotora
+    sysCall_putRectangle(x + 22, y, 11, 6, color); // Techo
+
+    // Ventanas de la locomotora
+    sysCall_putRectangle(x + 7, y + 3, 6, 6, 0x00000000); // Ventana
+
+    // Ruedas de la locomotora
+    sysCall_putRectangle(x + 6, y + 22, 6, 6, 0x00000000); // Rueda izquierda
+    sysCall_putRectangle(x + 24, y + 22, 6, 6, 0x00000000); // Rueda derecha
+}
+
+
+void drawLocomotiveVerical(int x, int y, uint64_t color){
+    // Locomotora del tren (girada 90 grados)
+    sysCall_putRectangle(x, y + 17, SQUARE_SIZE - 17, 11, color); // Cuerpo de la locomotora
+    sysCall_putRectangle(x + 11, y, SQUARE_SIZE, 11, color); // Frente de la locomotora
+    sysCall_putRectangle(x, y + 3, 6, 11, color); // Techo de la locomotora
+
+    // Ventanas de la locomotora (girada 90 grados)
+    sysCall_putRectangle(x + 3, y + 20, 6, 6, 0x00000000);  // Ventana 3
+    
+    // Ruedas de la locomotora (girada 90 grados)
+    sysCall_putRectangle(x + 22, y + 6, 6, 6, 0x00000000);  // Rueda izquierda
+    sysCall_putRectangle(x + 22, y + 24, 6, 6, 0x00000000);  // Rueda derecha
+}
+
+void drawLocomotiveDown(int x, int y, uint64_t color) {
+    // Locomotora del tren (girada 180 grados)
+    sysCall_putRectangle(x, y, SQUARE_SIZE - 17, 11, color); // Cuerpo de la locomotora
+    sysCall_putRectangle(x+11, y, SQUARE_SIZE, 11, color); // Frente de la locomotora
+    sysCall_putRectangle(x, y + 22, 6, 11, color); // Techo de la locomotora
+
+    // Ventanas de la locomotora (girada 180 grados)
+    sysCall_putRectangle(x + 3, y + 5, 6, 6, 0x00000000);  // Ventana 3
+    
+    // Ruedas de la locomotora (girada 180 grados)
+    sysCall_putRectangle(x + 22, y + 6, 6, 6, 0x00000000);  // Rueda izquierda
+    sysCall_putRectangle(x + 22, y + 24, 6, 6, 0x00000000);  // Rueda derecha
+}
+
 
 void drawWagon(int x, int y, uint64_t color) {
     // Primer vagón del tren bala
@@ -392,13 +502,49 @@ void drawWagon(int x, int y, uint64_t color) {
     sysCall_putRectangle(x + 24, y + 22, 6, 6, 0x00000000);  // Rueda derecha
 }
 
+void drawVericalWagon(int x, int y, uint64_t color) {
+     // Cuerpo del primer vagón (girado 90 grados)
+    sysCall_putRectangle(x, y, SQUARE_SIZE, 22, color); // Cuerpo del primer vagón
+
+    // Ventanas del primer vagón (girado 90 grados)
+    sysCall_putRectangle(x + 3, y + 6, 6, 6, 0x00000000);  // Ventana 1
+    sysCall_putRectangle(x + 3, y + 14, 6, 6, 0x00000000); // Ventana 2
+    sysCall_putRectangle(x + 3, y + 22, 6, 6, 0x00000000); // Ventana 3
+
+    // Ruedas del primer vagón (girado 90 grados)
+    sysCall_putRectangle(x + 22, y + 6, 6, 6, 0x00000000);  // Rueda izquierda
+    sysCall_putRectangle(x + 22, y + 24, 6, 6, 0x00000000);  // Rueda derecha
+    
+}
+
 
 void drawTrain(Player player) {
     sysCall_putRectangle(rewardPos[0], rewardPos[1],SQUARE_SIZE, SQUARE_SIZE, RED);
-    drawLocomotive(player.x, player.y, player.color);
+    if (player.inc_x == 0 && player.inc_y == -1){
+        
+        drawLocomotiveVerical(player.x, player.y, player.color);
+    }else if (player.inc_y == 0 && player.inc_x == -1){ 
+        
+        drawLocomotiveLeft(player.x, player.y, player.color);
+    } else if(player.inc_x == 1 && player.inc_y == 0){
+       
+        drawLocomotiveRight(player.x, player.y, player.color);
+    } else {
+        
+        drawLocomotiveDown(player.x, player.y, player.color);
+    }
+    
+    
     for(int i = 1; i < player.points; i++){
         if(!OUT_OF_BOUNDS(player.positions[i][0], player.positions[i][1])){
-            drawWagon(player.positions[i][0], player.positions[i][1], player.color);
-        } 
+            if (player.inc_x == 0)
+            {
+                drawVericalWagon(player.positions[i][0], player.positions[i][1], player.color);
+            }else{
+                drawWagon(player.positions[i][0], player.positions[i][1], player.color);
+            }   
+        }
     }
 }
+
+

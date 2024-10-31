@@ -244,3 +244,8 @@ void cursor(){
 	sleep(1);
 	putRectangle(cursorX, cursorY, 32, 5, 0xFFFFFF);
 }
+
+void setCursor(uint64_t x, uint64_t y){
+	cursorX = x * CHAR_WIDTH;
+	cursorY = y * CHAR_HEIGHT;
+}

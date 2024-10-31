@@ -43,4 +43,6 @@ int getDate(int date);
 
 int sysCall_snapshotState(); 
 
+void sysCall_setCursor(uint64_t x, uint64_t y);
+
 #endif

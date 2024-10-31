@@ -47,7 +47,6 @@ void printNchars(const char * str, int n){
 int scanf(char * buffer) {
     int idx = 0;
     int yUserPos = sysCall_cursorY();
-    int yPos = yUserPos;
     while (1) {
         char c = read_char();
         if(c == '\b' && sysCall_cursorX() <= 7 && sysCall_cursorY() == yUserPos){

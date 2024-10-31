@@ -35,3 +35,5 @@ uint64_t getScreenHeight();
 void getCharSize(int * width, int * height);
 
 void cursor(); 
+
+void setCursor(uint64_t x, uint64_t y);

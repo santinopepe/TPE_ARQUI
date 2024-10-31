@@ -31,6 +31,7 @@
 #define GET_SIZE 16
 #define CURSOR 17
 #define SNAPSHOT_STATE 18
+#define SET_CURSOR 19
 
 
 static void sys_read(uint64_t fd, char * buffer, uint64_t count);
@@ -73,7 +74,7 @@ uint64_t syscallDispatcher(uint64_t nr, uint64_t arg0, uint64_t arg1, uint64_t a
             sys_putRectangle(arg0, arg1, arg2, arg3, arg4);
             return 0;
         case TICKS:
-            return ticks_elapsed();
+            return sys_ticks();
         case WAIT:
             sys_wait(arg0);
             return 0;
@@ -99,7 +100,10 @@ uint64_t syscallDispatcher(uint64_t nr, uint64_t arg0, uint64_t arg1, uint64_t a
             cursor();
             return 0;
         case SNAPSHOT_STATE:
-            return snapShotTaken;    
+            return snapShotTaken;  
+        case SET_CURSOR:
+            setCursor(arg0, arg1);
+            return 0;  
         default:
             return 0;
     }
