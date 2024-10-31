@@ -3,10 +3,13 @@
 #include <defs.h>
 #include <time.h>
 
+#define DEFAULT_HEIGTH 32
+#define DEFAULT_WIDTH 10
+
 static int CHAR_WIDTH = 10; 
 static int CHAR_HEIGHT = 32;
 
-#define SIZE 1; 
+static int SIZE= 1; 
 
 uint32_t cursorX = 0; 
 uint32_t cursorY = 0;
@@ -64,31 +67,6 @@ void putPixel(uint32_t hexColor, uint64_t x, uint64_t y) {
     framebuffer[offset+2]   =  (hexColor >> 16) & 0xFF;
 }
 
-
-void putBackScreen(){
-
-	/* CAMBIAR SCREEN WIDTH Y SCREEN HEIGHT POR LOS VALORES REALES
-	*  HACER LAS FUNCIONES GETWIDTH Y GETHEIGHT PARA OBTENERLOS
-	*/
-	int screenWidth = 1000;
-	int screenHeight = 1000;
-	int square = 0;
-	
-    for (int y = 0; y < screenHeight; y += 30) {
-        for (int x = 0; x < screenWidth; x += 30) {
-            for (int i = 0; i < 30; i++) {
-                for (int j = 0; j < 30; j++) {
-                    if (square % 2 == 0)
-                        putPixel(0x007fd7fa, x + i, y + j);
-                    else
-                        putPixel(0x0065adc9, x + i, y + j);
-                }
-            }
-			square++;
-        }    
-		square++;
-	}
-}
 
 void newLine(){
 	cursorX = 0;
@@ -184,11 +162,12 @@ void putChar(char c, uint32_t hexColor) {
                     newLine();
                 }
                 // Dibujar el carácter en la posición actual del cursor (letras invertidas)
-                for (int i = 0; i < CHAR_HEIGHT ; i++) {
-                    for (int j = 0; j < CHAR_WIDTH; j++) {
+                for (int i = 0; i < DEFAULT_HEIGTH ; i++) {
+                    for (int j = 0; j < DEFAULT_WIDTH; j++) {
                         // Cambiar el orden de los bits, dibujándolos de derecha a izquierda
                         if ((uint8_t)font[i + ((start) * 32)] & (1 << j)) {
-                        	putPixel(hexColor, cursorX + j, cursorY + i);
+							putRectangle(cursorX + j, cursorY + i, SIZE, SIZE, hexColor);
+                        	//putPixel(hexColor, cursorX + j, cursorY + i);
                     	}
                     }
                 }
@@ -242,9 +221,9 @@ uint64_t getCursorX(){
 }
 
 void setLetterSize(int size){
-	putChar(size + '0', 0xFFFFFF);
-	CHAR_WIDTH =  size + 32;
-	CHAR_HEIGHT = size + 10;
+	CHAR_WIDTH =  size + DEFAULT_WIDTH;
+	CHAR_HEIGHT = size + DEFAULT_HEIGTH;
+	SIZE = size;
 }
 
 void getCharSize(int * width, int * height){

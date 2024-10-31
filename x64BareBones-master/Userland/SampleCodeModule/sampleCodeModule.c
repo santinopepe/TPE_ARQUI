@@ -14,7 +14,7 @@ static int var2 = 0;
 
 int main() {
     welcome();
-	sysCall_sound(1, 500);
+	//sysCall_sound(1, 500);
 	
 	while (1)
 	{
