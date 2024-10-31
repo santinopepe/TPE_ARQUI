@@ -29,12 +29,12 @@ void welcome(){
 }
 
 void help(){
-    if(sysCall_getScreenHeight() < sysCall_cursorY() + 8){
+    if(sysCall_getScreenHeight() < sysCall_cursorY() + 9){
         clear();
         commandLine();
         printf("help\n");
     }
-    printf("Available commands: \ntime - Shows the current time\nregs - Shows the registers\nclear - Clears the screen\nsize - Changes the size of the letters\ngame - Starts the game\nhelp - Shows the available commands\ndivideBy0 - Throws a divide by zero exception\ninvalidOp - Throws an invalid operation exception\n");
+    printf("Available commands: \ntime - Shows the current time\nregs - Shows the registers\nclear - Clears the screen\nsize - Changes the size of the letters\ngame - Starts the game\nhelp - Shows the available commands\ndivideBy0 - Throws a divide by zero exception\ninvalidOp - Throws an invalid operation exception\n echo - Prints the given string\n");
 }
 
 void echo(char * str){
