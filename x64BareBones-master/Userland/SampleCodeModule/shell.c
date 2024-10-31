@@ -141,11 +141,12 @@ void scanCommand(char * command) {
                     clear();
                     break;
                 case 4:
-                    if (args != 0) {
-                        printf("Setting letter size to %d\n", atoi(args));
-                        set_letterSize(atoi(args)); //NO FUNCIONA
+                    int value = atoi(args);
+                    if (args != 0 && value > 0 && value < 5) {
+                        printf("Setting letter size to %d\n", value);
+                        set_letterSize(value); 
                     } else {
-                        printf("Error: Missing argument for set_letterSize\n");
+                        printf("Error: Invalid Argument\n");
                     }
                     break;
                 case 5:
