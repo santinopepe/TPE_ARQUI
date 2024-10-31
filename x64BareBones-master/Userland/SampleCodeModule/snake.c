@@ -345,8 +345,6 @@ void drawPoints(int player){
 }
 
 void play(){
-    int letterWidth, letterHeight;
-    sysCall_getCharSize(&letterWidth, &letterHeight);
     sysCall_setSize(1);
     clearScreen();
     char c=0;
@@ -417,7 +415,6 @@ void play(){
     }
     clearScreen();
     printf("Game exited\n");
-    sysCall_setSize(letterHeight-SQUARE_SIZE);
     return;
 }
 
