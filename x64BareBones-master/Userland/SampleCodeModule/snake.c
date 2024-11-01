@@ -235,11 +235,11 @@ static void newRewardPos(){
         y = 100 + (y / SQUARE_SIZE) * SQUARE_SIZE;
     
         //This conditions makes is so the game doesn't halt while is looking for a new position
-        if((OUT_OF_BOUNDS(x, y) || board[x][y] == 1) && board[5*32][7*32] != 1){
+        if((OUT_OF_BOUNDS(x, y) || board[x][y] == 1) && board[5*SQUARE_SIZE][7*SQUARE_SIZE] != 1){
             x = 5*SQUARE_SIZE;
             y = 7*SQUARE_SIZE;
             
-        } else if ((OUT_OF_BOUNDS(x, y) || board[x][y] == 1) && board[7*32][5*32] != 1){
+        } else if ((OUT_OF_BOUNDS(x, y) || board[x][y] == 1) && board[7*SQUARE_SIZE][5*SQUARE_SIZE] != 1){
             x = 7*SQUARE_SIZE;
             y = 5*SQUARE_SIZE;
         }else{ //This will halt the game until it finds a new position, it will only happen if the board is almost full full
