@@ -38,7 +38,7 @@ cpuVendor:
 	pop rbp
 	ret
 
-
+; Function to get the key from the keyboard
 getKey:
 	push rbp
 	mov rbp, rsp
@@ -50,6 +50,7 @@ getKey:
 	pop rbp
 	ret
 
+; Functions to get the time from the RTC
 getSec:
 	push rbp
 	mov rbp, rsp
@@ -88,6 +89,7 @@ getHour:
 	pop rbp
 	ret
 
+; Functions to beep
 beep:
 	push rbp
     push rdx
@@ -123,12 +125,12 @@ stop_beep:
 
 
 
-inb:				; Funciones para el correcto funcionamiento del soundDriver
+inb:				; Functions for the correct use of the beep
 	push rbp
 	mov rbp, rsp
 
     mov rdx,rdi
-    in al,dx		; pasaje en 8 bits
+    in al,dx		; 8 bit pasage
 
 	mov rsp, rbp
 	pop rbp
@@ -140,7 +142,7 @@ outb:
 
     mov rax, rsi    
     mov rdx, rdi
-	out dx, al		; pasaje en 8 bits
+	out dx, al		; 8 bit pasage
 
 	mov rsp, rbp
 	pop rbp

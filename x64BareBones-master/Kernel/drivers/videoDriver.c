@@ -14,6 +14,14 @@ static int SIZE= 1;
 uint32_t cursorX = 0; 
 uint32_t cursorY = 0;
 
+
+/**
+ * @brief Functions that changes a number that has a string format to a number, with a given base 
+ * @param value The number to change
+ * @param buffer The buffer where the number is stored
+ * @param base The base of the number
+ * @returns The number
+*/
 static uint32_t uintToBase(uint64_t value, char * buffer, uint32_t base); 
 
 struct vbe_mode_info_structure {

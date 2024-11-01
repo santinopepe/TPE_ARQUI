@@ -13,8 +13,7 @@ extern void saveState(void);
 
 static char buffer[BUFFER_SIZE] = {0};
 static int bufferIndex = 0;
-static char shiftPressed = 0;
-static char capsLock = 0;
+static int capsLock = 0;
 static int currentChar = 0; 
 static int cantElems = 0;
 
@@ -26,31 +25,19 @@ static int cantElems = 0;
 // Special keys
 #define ESC 0x01
 #define ENTER 0x1C
-#define BACKSPACE 0x0E// 0x0E
+#define BACKSPACE 0x0E
 #define TAB 0x0F
-
-#define L_SHIFT_PRESS 0x2A
-#define L_SHIFT_RELEASE 0xAA
-#define R_SHIFT_PRESS 0x36
-#define R_SHIFT_RELEASE 0xB6
 
 #define CAPS_LOCK_PRESS 0x3A
 
 #define ALT_PRESS 0x3B
 #define ALT_RELEASE 0xB8
 
-#define UPPER_ARROW_PRESS 0x48
-#define LOWER_ARROW_PRESS 0x50
-#define LEFT_ARROW_PRESS 0x4B
-#define RIGHT_ARROW_PRESS 0x4D
-#define UPPER_ARROW_RELEASE 0xC8
-#define LOWER_ARROW_RELEASE 0xD0
-#define LEFT_ARROW_RELEASE 0xCB
-#define RIGHT_ARROW_RELEASE 0xCD
 
 #define CTRL_PRESS 0x1D
 #define CTRL_RELEASE 0x9D
 
+// Key values, the first value is the key pressed, the second is the key pressed with shift/caps lock
 static unsigned char keyValues[KEYS][2] = {
 	{0, 0},
 	{27, 27},
@@ -127,12 +114,12 @@ char nextChar(){
 void keyBoardHandler(){
     uint64_t key = getKey();
     
-   if(key == NULL){
-      return; 
-   }
+    if(key == NULL){
+        return; 
+    }
 
-    if((key >= 0 && key <= 256) || keyValues[key][0] != 0){ //verificar la segunda condicion
-        switch (key)
+    if((key >= 0 && key <= 256) || keyValues[key][0] != 0){ 
+        switch (key) 
         {
         case BACKSPACE:
             buffer[bufferIndex++] = '\b';
@@ -149,16 +136,6 @@ void keyBoardHandler(){
         case ESC:
             snapShotTaken = 1;
             return;
-        /* 
-        case L_SHIFT_PRESS:
-        case R_SHIFT_PRESS:
-            shiftPressed = 1;
-            break;
-        case L_SHIFT_RELEASE:
-        case R_SHIFT_RELEASE:
-            shiftPressed = 0;
-            break;
-        */
         case CAPS_LOCK_PRESS:
             capsLock = 1-capsLock;
             break;   
@@ -166,7 +143,9 @@ void keyBoardHandler(){
             break;
        }
 
-        if(key < MAX_PRESS_KEY){
+        if(key < MAX_PRESS_KEY){ 
+            
+            //Check so we don't have problems with the buffer
             if(bufferIndex == BUFFER_SIZE){
                 bufferIndex = 0;
             }
@@ -176,13 +155,13 @@ void keyBoardHandler(){
             if(currentChar == BUFFER_SIZE){
                 currentChar = 0;
             }
-            buffer[bufferIndex++] = keyValues[key][capsLock || shiftPressed];
+            buffer[bufferIndex++] = keyValues[key][capsLock]; // We add the key to the buffer
             cantElems++;
        }
     }
 
 
-    if(buffer[bufferIndex-1] == '!'){
+    if(buffer[bufferIndex-1] == '!'){ // ! is the snapshot key, here we check if we took a snapshot
        saveState();
        snapShotTaken = 1; 
     }

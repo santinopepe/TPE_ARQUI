@@ -19,27 +19,89 @@
 #define MONTH 0X8
 #define YEAR 0X9
 
-
+/**
+ * @brief  Prints the welcome message
+ * @param void  
+ * @return void
+*/
 void welcome(); 
+
+/**
+ * @brief  Prints the help message
+ * @param void  
+ * @return void
+*/
 
 void help();
 
+/**
+ * @brief Prints the echo message
+ * @param str The string to print
+ * @return void
+*/
+
 void echo(char * str);
+
+/**
+ * @brief Prints the time and date(UTC)
+ * @param void
+ * @return void
+*/
 
 void time();
 
+/**
+ * @brief Prints the registers of the CPU
+ * @param void
+ * @return void
+*/
 void regs();
 
+
+/**
+ * @brief Clears the screen
+ * @param void
+ * @return void
+*/
 void clear();
+
+/**
+ * @brief Sets the size of the letters
+ * @param size The size of the letters
+ * @return void
+*/
 
 void set_letterSize(float size);
 
+
+/**
+ * @brief Boots the game 
+ * @param void
+ * @return void
+*/
 void game();
+
+/**
+ * @brief Handles the commands written on the terminal
+ * @param command The command to scan
+ * @return void
+*/
 
 void scanCommand(char * command);
 
+/**
+ * @brief Scans the line on the terminal
+ * @param void
+ * @return void
+*/
+
 void scanLine();
 
+/**
+ * @brief Prints the command line on the terminal "$User: "
+ * @param void
+ * @return void
+*/
 void commandLine();
 #endif // _SHELL_H
 

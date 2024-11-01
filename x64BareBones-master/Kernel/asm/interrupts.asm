@@ -69,7 +69,7 @@ SECTION .text
 %macro irqHandlerMaster 1
 	pushState
 
-	mov rdi, %1 ; pasaje de parametro
+	mov rdi, %1 ;PARAMETER
 	cmp rdi, 1 
 	jne .noSave
 	saveRegisters
@@ -123,16 +123,15 @@ SECTION .text
 
 	;Call the exception dispatcher
 
-	mov rdi, %1 ; pasaje de parametro
+	mov rdi, %1 ;PARAMETER
 	call exceptionDispatcher
 
 
-	popState
-	;add rsp, 8 ;Remove the error code from the stack
-	call getStackBase
+	popState         ;Restore the registers
+	call getStackBase  ;Get the stack base
 	sub rax, 20h
 	mov qword [rsp+8*3], rax
-	call retUserland
+	call retUserland  ;Return to userland
 	mov qword [rsp], rax
 	iretq
 
@@ -169,7 +168,7 @@ picMasterMask:
 picSlaveMask:
 	push    rbp
     mov     rbp, rsp
-    mov     ax, di  ; ax = mascara de 16 bits
+    mov     ax, di  ; AX = picSlaveMask
     out	0A1h,al
     pop     rbp
     retn
@@ -185,7 +184,7 @@ _syscallHandler:
 	mov rdx, rsi
 	mov rsi, rdi
 	mov rdi, rax
-	call syscallDispatcher
+	call syscallDispatcher ;Call the syscall dispatcher
 	mov [aux], rax 
 
 	mov al,20h
@@ -233,11 +232,11 @@ _irq05Handler:
 
 ;Zero Division Exception
 _exception0Handler:
-	exceptionHandler 0
+	exceptionHandler 0 
 
 ;Invalid Opcode Exception
 _exception01Handler:
-	exceptionHandler 6
+	exceptionHandler 6 
 
 
 haltcpu:

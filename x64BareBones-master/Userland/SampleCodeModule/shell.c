@@ -12,12 +12,52 @@ static int cantCommands = 9;
 char dateStr[9] = {0};
 char timeStr[9] = {0};
 
+/**
+ * @brief Decodes the time, as it isn't stored in a human readable format
+ * @param time The time to decode
+ * @returns The decoded time
+*/
 static unsigned int decode(unsigned int time); 
+
+/**
+ * @brief Converts an integer on string format to a  number with given base
+ * @param value The value to convert
+ * @param buffer The buffer where the value will be stored
+ * @param base The base of the number
+ * @returns The number of digits of the number
+*/
+
 static uint32_t uintToBase(uint64_t value, char * buffer, uint32_t base); 
+
+
+/**
+ * @brief Builds the time string
+ * @returns The time in the format hh:mm
+*/
 static char * getTime(); 
+
+/**
+ * @brief Builds the date string
+ * @returns The date in the format dd/mm/yyyy
+*/
 static char  * date(); 
+
+/**
+ * @brief Calls an invalid operation exception
+ * @param void
+ * @returns void
+*/
 static void invalidOpException();
+
+/**
+ * @brief Calls a divide by zero exception
+ * @param void
+ * @returns void
+*/
 static void divideByZeroException();
+
+
+
 
 void commandLine(){
     colorPrint("$User", COLOR_GREEN);
@@ -34,7 +74,7 @@ void help(){
         commandLine();
         printf("help\n");
     }
-    printf("Available commands: \ntime - Shows the current time\nregs - Shows the registers\nclear - Clears the screen\nsize - Changes the size of the letters\ngame - Starts the game\nhelp - Shows the available commands\ndivideBy0 - Throws a divide by zero exception\ninvalidOp - Throws an invalid operation exception\n echo - Prints the given string\n");
+    printf("Available commands: \ntime - Shows the current time\nregs - Shows the registers\nclear - Clears the screen\nsize - Changes the size of the letters\ngame - Starts the game\nhelp - Shows the available commands\ndivideBy0 - Throws a divide by zero exception\ninvalidOp - Throws an invalid operation exception\necho - Prints the given string\n");
 }
 
 void echo(char * str){
@@ -47,7 +87,7 @@ void echo(char * str){
 }
 
 void time(){
-    if(sysCall_getScreenHeight() <  sysCall_cursorY() + 1){
+    if(sysCall_getScreenHeight() <  sysCall_cursorY() + 2){
         clear();
         commandLine();
         printf("time\n");
@@ -81,9 +121,6 @@ void game(){
     play();
 }
 
-void cursor(){
-    sysCall_Cursor();
-}
 
 void scanLine(){
     char buffer[1024] = {0};
@@ -108,11 +145,11 @@ void scanCommand(char * command) {
     if (command[i] == '\n') {
         return;
     }
-    // Encontrar el final del comando
+    // Find the end of the command  
     while (command[i] != ' ' && command[i] != '\0' && command[i] != '\n') {
         i++;
     }
-    // Separar el comando de sus argumentos
+    // Split the command and the arguments
     char *args = 0;
     if (command[i] == ' ') {
         command[i] = '\0';
@@ -120,11 +157,11 @@ void scanCommand(char * command) {
     } else {
         command[i] = '\0';
     }
-    if(command[0] == '!'){ //Por ahi habria que hacer una sys call que chequee
+    if(command[0] == '!'){ 
         printf("Taking snapshot...\n");
         return; 
     }
-    // Buscar el comando en la lista de comandos
+    // Check if the command is valid
     for (int j = 0; j < cantCommands; j++) {
         if (strcmp(command, commands[j]) == 0) {
             switch (j) {
@@ -181,7 +218,7 @@ void buildDateStr(char * dateStr, int data){
 }
 
 
-char * getTime(){
+static char * getTime(){
     int hours = decode(getDate(HOURS));
     int minutes = decode(getDate(MINUTES));
 
@@ -192,7 +229,7 @@ char * getTime(){
     return timeStr;
 }
 
-char * date(){
+static char * date(){
     int day = decode(getDate(DAY));
     int month = decode(getDate(MONTH));
     int year = decode(getDate(YEAR));
@@ -243,7 +280,7 @@ static uint32_t uintToBase(uint64_t value, char * buffer, uint32_t base){
 
 
 static void invalidOpException(){
-    if(sysCall_getScreenHeight() <= sysCall_cursorY() + 23){
+    if(sysCall_getScreenHeight() <= sysCall_cursorY() + 24){
         clear();
         commandLine();
         printf("invalidOp\n");
@@ -252,7 +289,7 @@ static void invalidOpException(){
 }
 
 static void divideByZeroException(){
-    if(sysCall_getScreenHeight() <= sysCall_cursorY() + 23){
+    if(sysCall_getScreenHeight() <= sysCall_cursorY() + 24){
         clear();
         commandLine();
         printf("divideBy0\n");

@@ -2,6 +2,17 @@
 #include <stdarg.h>
 #include "include/C_lib.h"
 
+#define USER_LEN 7 //The length of "user: "
+
+/**
+ * @brief  Helps the printf function to print the different types of variables
+ * @param str The string to print
+ * @param list The list of arguments
+ * @return void
+*/
+static void va_print(const char * str, va_list list); 
+
+
 char read_char(){
     char buffer[1] = {0};
     sysCall_read(0, buffer, 1);
@@ -42,17 +53,18 @@ void printNchars(const char * str, int n){
 }
 
 
-//CHEQUEAR
-// devuelvo la cantidad de caracteres leidos
+
 int scanf(char * buffer) {
     int idx = 0;
-    int yUserPos = sysCall_cursorY();
+    int yUserPos = sysCall_cursorY(); // We save the y position of the user, so we can check if the user tries to eliminate "user: " from the command line
     while (1) {
         char c = read_char();
-        if(c == '\b' && sysCall_cursorX() <= 7 && sysCall_cursorY() == yUserPos){
+        if(c == '\b' && sysCall_cursorX() <= USER_LEN && sysCall_cursorY() == yUserPos){
             continue;
         }   
-        putChar(c, 1);
+        putChar(c, 1); // We print the character
+
+        //We handle the diffrent cases of the special characters
         if (c != -1 && c != 0) {
             if (c == '\b' && idx > 0) {
                 idx--;

@@ -29,22 +29,100 @@
 #define SET_SIZE 14
 #define SCREEN_HEIGHT 15
 #define GET_SIZE 16
-#define CURSOR 17
 #define SNAPSHOT_STATE 18
 #define SET_CURSOR 19
 
 
+/**
+ * @brief Function that handles read syscall
+ * @param fd The file descriptor
+ * @param buffer The buffer to read
+ * @param count The amount of bytes to read
+*/
 static void sys_read(uint64_t fd, char * buffer, uint64_t count);
+
+/**
+ * @brief Function that handles write syscall
+ * @param fd The file descriptor
+ * @param buffer The buffer to write
+ * @returns void
+*/
 static void sys_write(uint32_t fd, char * buffer);
+
+/**
+ * @brief Function that handles clear syscall
+ * @param void
+ * @returns void
+*/
 static void sys_clear();
+
+/**
+ * @brief Function that handles seconds syscall
+ * @param seconds A pointer where the seconds will be stored
+ * @returns void
+*/
 static void sys_seconds(uint64_t * seconds);
+
+/**
+ * @brief Function that handles minutes syscall
+ * @param minutes A pointer where the minutes will be stored
+ * @returns void
+*/
 static void sys_minutes(uint64_t * minutes);
+
+/**
+ * @brief Function that handles hours syscall
+ * @param hours A pointer where the hours will be stored
+ * @returns void
+*/
 static void sys_hours(uint64_t * hours);
+
+/**
+ * @brief Function that handles sound syscall
+ * @param void
+ * @returns void
+*/
 static void sys_sound();
+
+/**
+ * @brief Function that handles rectangle syscall
+ * @param x The x position of the rectangle
+ * @param y The y position of the rectangle
+ * @param height The height of the rectangle
+ * @param width The width of the rectangle
+ * @param hexColor The color of the rectangle
+ * @returns void
+*/
 static void sys_putRectangle(int x, int y, int height, int width, uint32_t hexColor);
+
+/**
+ * @brief Function that handles ticks syscall
+ * @param void
+ * @returns The ticks elapsed
+*/
 static uint64_t sys_ticks();
-static void sys_wait();
-static void sys_ColorWrite(uint32_t fd, char * buffer, uint32_t color); 
+
+/**
+ * @brief Function that handles wait syscall
+ * @param time The time to wait
+ * @returns void
+*/
+
+static void sys_wait(uint64_t time);
+
+/**
+ * @brief Function that handles colorwrite syscall
+ * @param fd The file descriptor
+ * @param buffer String to write
+ * @param color The color of the string
+*/
+static void sys_ColorWrite(uint32_t fd, char * buffer, uint32_t color)
+
+/**
+ * @brief Function that handles registers syscall
+ * @param void
+ * @returns void
+*/; 
 static void sys_writeReg(); 
 
 uint64_t syscallDispatcher(uint64_t nr, uint64_t arg0, uint64_t arg1, uint64_t arg2, uint64_t arg3, uint64_t arg4, uint64_t arg5){
@@ -92,12 +170,9 @@ uint64_t syscallDispatcher(uint64_t nr, uint64_t arg0, uint64_t arg1, uint64_t a
             setLetterSize((int)arg0);
             return 0;
         case SCREEN_HEIGHT:
-            return getScreenHeight();
+            return getScreenHeight(); 
         case GET_SIZE:
             getCharSize((int *)arg0, (int *)arg1);
-            return 0;
-        case CURSOR:
-            cursor();
             return 0;
         case SNAPSHOT_STATE:
             return snapShotTaken;  
@@ -111,7 +186,7 @@ uint64_t syscallDispatcher(uint64_t nr, uint64_t arg0, uint64_t arg1, uint64_t a
 
 
 static void sys_read(uint64_t fd, char * buffer, uint64_t count){
-    if(fd == STDIN){
+    if(fd == STDIN){ //Check if the file descriptor is STDIN
         while(count > 0){
             char val = nextChar();
             if (val == -1){

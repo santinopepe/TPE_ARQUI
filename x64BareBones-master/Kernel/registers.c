@@ -8,9 +8,10 @@ static char * regs[] = {"RAX","RBX","RCX","RDX","RSI","RDI","RBP","R8","R9","R10
 
 char snapShotTaken = 0; 
 
+
 void printRegisters(uint64_t * registers){
 	if(snapShotTaken == 0){
-		printf("No se tomo un snapshot, Recuerde presionar '!' (debe usar capslock)", RED);
+		printf("Snapshot wasn't taken, to take a snapshot press ! (use caps lock)", RED);
 		newLine();
 		return;
 	}
@@ -20,5 +21,5 @@ void printRegisters(uint64_t * registers){
 		printRegister(registers[i]);
 		newLine();
 	}
-	snapShotTaken = 0;
+	snapShotTaken = 0; // We reset the flag
 }

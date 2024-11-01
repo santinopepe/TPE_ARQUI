@@ -29,41 +29,136 @@
 #define MAX_WAGONS 100
 
 typedef struct Player{
-    int x;
-    int y;
+    int x; //X coordinate of the head of the train
+    int y; //Y coordinate of the head of the train
     int inc_x;
     int inc_y;
-    int points;
-    int positions[MAX_WAGONS][2]; // Matriz para almacenar las posiciones de la serpiente
-    uint64_t color;
-    char lost;
+    int points; //Amounts of points the player has (Also the amount of wagons)
+    int positions[MAX_WAGONS][2]; // Matrix to store the positions of the wagons
+    uint64_t color; //Color of the train
+    char lost; //Flag to know if the player lost
 } Player;
 
 Player player1, player2;
 
-static char board[SCREEN_WIDTH][SCREEN_HEIGHT] = {0}; //position table
-static char reward = 1; //falg to know if there is a reward on the board
+static char board[SCREEN_WIDTH][SCREEN_HEIGHT] = {0}; //positions of the players on the board
+static char reward = 1; //flag to know if the reward is on the screen
 static int difficulty = 7; //difficulty of the game
+static int rewardPos[2] = {320,228}; //reward position
 
-static int rewardPos[2] = {320,228 }; //reward position
+/**
+ * @brief Draws the train of the player
+ * @param player The player to draw
+ * @return void
+*/
+static void  drawTrain(Player player);
+
+/**
+ * @brief Draws the reward
+ * @param void
+ * @return void
+*/
+static void drawReward();
+
+/**
+ * @brief Updates the game state
+ * @param player The player to update
+ * @return void
+*/
+static void update(Player * player);
+
+/**
+ * @brief Moves the player
+ * @param c The key pressed
+ * @return void
+*/
+static void movePlayer(char c);
+
+/**
+ * @brief Puts the back screen
+ * @param void
+ * @return void
+*/
+static void putBackScreen();
+
+/**
+ * @brief Waits, so the player can play the game (Without this the game is too fast)
+ * @param void
+ * @return void
+*/
+static void wait();
+
+/**
+ * @brief Draws the points of the player
+ * @param player The player to draw
+ * @return void
+*/
+static void drawPoints(int player);
+
+/**
+ * @brief Initializes the a player
+ * @param player The player to initialize
+ * @param nroPlayers The number of players in the game
+ * @return void
+*/
+static void initializePlayer(Player * player, int nroPlayers);
+
+/**
+ * @brief Initializes the game
+ * @param void
+ * @return int The number of players
+*/
+
+static int initialize();
+
+/**
+ * @brief Generates a new position for the reward
+ * @param void
+ * @return void
+*/
+static void newRewardPos();
+
+/**
+ * @brief Chooses the color of the player
+ * @param player The player to choose the color
+ * @param playerNumber The number of the players
+ * @return void
+*/
+static void chooseColor(Player * player, int playerNumber); 
+/**
+ * @brief Chooses the difficulty of the game
+ * @param void
+ * @return void
+*/
+static void chooseDificulty();
+
+/**
+ * @brief Initializes the vector of the player
+ * @param player The player to initialize
+ * @return void
+*/
+static void initializeVector(Player * player);
 
 
-void drawTrain(Player player);
-void drawReward();
-void update(Player * player);
-void movePlayer(char c);
-void putBackScreen();
-void wait();
-void drawPoints(int player);
-void play();
-void initializePlayer(Player * player, int nroPlayers);
-int initialize();
-void newRewardPos();
-void chooseColor(Player * player); 
-void chooseDificulty();
-void initializeVector(Player * player);
+/**
+ * @brief This group of functions draw the different parts of the train, on different directions
+ * @param x The x position of the train
+ * @param y The y position of the train
+ * @param color The color of the train
+ * @return void
+*/
 
-void movePlayer(char c){
+static void drawLocomotiveLeft(int x, int y, uint64_t color);
+static void drawLocomotiveRight(int x, int y, uint64_t color);
+static void drawLocomotiveVerical(int x, int y, uint64_t color);
+static void drawLocomotiveDown(int x, int y, uint64_t color); 
+static void drawVericalWagon(int x, int y, uint64_t color); 
+static void drawWagon(int x, int y, uint64_t color);
+
+
+
+
+static void movePlayer(char c){
     switch(c){
         case 'w':
             if(player1.inc_y != 1){
@@ -119,7 +214,7 @@ void movePlayer(char c){
 }
 
 
-void newRewardPos(){
+static void newRewardPos(){
     int x, y; 
     do{
         uint64_t ticks = sysCall_ticks();
@@ -137,18 +232,18 @@ void newRewardPos(){
 }
 
 
-void drawReward(){
+static void drawReward(){
     sysCall_putRectangle(rewardPos[0], rewardPos[1], SQUARE_SIZE, SQUARE_SIZE, RED);
 }
 
-void initializeVector(Player * player){
+static void initializeVector(Player * player){
     for (int i = 0; i < MAX_WAGONS; i++) {
         (*player).positions[i][0] = 0;
         (*player).positions[i][1] = 0;
     }
 }
 
-void initializePlayer(Player * player, int nroPlayers){
+static void initializePlayer(Player * player, int nroPlayers){
 
     (*player).x =  5*SQUARE_SIZE;
     (*player).y = 5*SQUARE_SIZE;
@@ -167,7 +262,7 @@ void initializePlayer(Player * player, int nroPlayers){
     (*player).positions[0][1] = (*player).y;
 }
 
-int initialize(){
+static int initialize(){
     printf("How many players? (1 or 2)\n");
     printf("Press 'q' to exit\n");
     int nro_players = 0;
@@ -184,14 +279,14 @@ int initialize(){
     }while(nro_players != '1' && nro_players != '2');
     nro_players -= '0';
 
-    chooseColor(&player1);
+    chooseColor(&player1,1);
     printf("Press 'w', 'a', 's', 'd' to move player 1\n");
     initializePlayer(&player1, 1);
 
 
 
     if(nro_players == 2){
-        chooseColor(&player2);
+        chooseColor(&player2, 2);
         printf("Press 'i', 'j', 'k', 'l' to move player 2\n");
         initializePlayer(&player2, 2);
         wait();
@@ -201,7 +296,7 @@ int initialize(){
     return nro_players;
 }
 
-void chooseDificulty(){
+static void chooseDificulty(){
     printf("Choose the difficulty of the game:\n Options: 1. Easy 2. Medium 3. Hard\n");
     char dif;
     do {
@@ -211,13 +306,13 @@ void chooseDificulty(){
         }
         switch (dif) {
             case '1':
-                difficulty = 10;
+                difficulty = 5;
                 break;
             case '2':
-                difficulty = 7;
+                difficulty = 4;
                 break;
             case '3':
-                difficulty = 5;
+                difficulty = 2;
                 break;
             case 'q':
                 return;
@@ -229,7 +324,7 @@ void chooseDificulty(){
 }
 
 
-void chooseColor(Player * player){
+static void chooseColor(Player * player, int player_number){
     printf("Choose the color for your train:\n Options: 1. Red 2. Green 3. Blue 4. Pink 5. Purple 6. Yellow 7. Orange\n");
     char color;
     do {
@@ -237,11 +332,6 @@ void chooseColor(Player * player){
         while (color == 0) {
             color = read_char();
         }
-        if(color == (*player).color){
-            printf("Color already chosen\n");
-            continue;
-        }
-
         switch (color) {
             case '1':
                 (*player).color = RED;
@@ -270,47 +360,54 @@ void chooseColor(Player * player){
                 printf("Invalid color\n");
                 break;     
         }
+        
+        //Check if the color is already chosen
+        if(player->color == player1.color && player_number == 2){
+            printf("Color already chosen\n");
+            color = 0;
+        }
+
     } while (color != '1' && color != '2' && color != '3' && color != '4' && color != '5' && color != '6' && color != '7'); 
 }
 
-void update(Player * player){
+static void update(Player * player){
     int tail_x = (*player).positions[(*player).points - 1][0];
     int tail_y = (*player).positions[(*player).points - 1][1];
 
-    // Mover las posiciones de la serpiente
+    // Move the wagons
     for (int i = (*player).points - 1; i > 0; i--) {
         (*player).positions[i][0] = (*player).positions[i - 1][0];
         (*player).positions[i][1] = (*player).positions[i - 1][1];
     }
 
-    // Actualizar la posición de la cabeza
+    // Update the head of the train
     (*player).x += (*player).inc_x*SQUARE_SIZE;
     (*player).y += (*player).inc_y*SQUARE_SIZE;
     (*player).positions[0][0] = (*player).x;
     (*player).positions[0][1] = (*player).y;
 
-    // Verificar si la serpiente ha comido una recompensa
+    // Check if the player got the reward
     if (reward && NEAR_REWARD((*player).x, (*player).y)) {
         sysCall_sound(1, 500);
         (*player).points++;
         reward = 0;
     } 
-        // Poner en 0 la posición anterior de la cola
+        // Put on the board the tail of the train 0, as it is not part of the train anymore
         board[tail_x][tail_y] = 0;
     
 
-    // Verificar si está fuera de los límites
+    // Check if the player lost
     if (OUT_OF_BOUNDS((*player).x, (*player).y) || board[(*player).x][(*player).y] == 1 ) {
         (*player).lost =1;
     }
 
-    // Actualizar el tablero con la nueva posición de la serpiente
+    // Put on the board the new position of the player
     for (int i = 0; i < (*player).points; i++) {
         board[(*player).positions[i][0]][(*player).positions[i][1]] = 1;
     }
 }
 
-void putBackScreen(){
+static void putBackScreen(){
 	int square = 0;
     sysCall_putRectangle(0, 0, 100,  SCREEN_WIDTH, SILVER);
     for (int y = 100; y < SCREEN_HEIGHT; y += SQUARE_SIZE) {
@@ -326,12 +423,12 @@ void putBackScreen(){
 	}
 }
 
-void wait(){
+static void wait(){
     uint64_t ticks = sysCall_ticks();
     while(sysCall_ticks() - ticks < difficulty);
 }
 
-void drawPoints(int player){
+static void drawPoints(int player){
     if (player == 1){
         sysCall_setCursor(0, 0);
         printf("                Player 1\n");
@@ -421,101 +518,97 @@ void play(){
 
 
 
-
-
-
-void drawLocomotiveLeft(int x, int y, uint64_t color) {
-    // Locomotora del tren 
+static void drawLocomotiveLeft(int x, int y, uint64_t color) {
+    // Locomotive of the train
     sysCall_putRectangle(x + 17, y, 11, SQUARE_SIZE-17, color); // Cuerpo de la locomotora
     sysCall_putRectangle(x, y + 11, 11, SQUARE_SIZE, color); // Frente de la locomotora
     sysCall_putRectangle(x + 3, y, 11, 6, color); // Techo de la locomotora
 
-    // Ventanas de la locomotora
+    // Windows of the locomotive
     sysCall_putRectangle(x + 20, y + 3, 6, 6, 0x00000000);  // Ventana 3
     
-    // Ruedas de la locomotora
+    // Wheels of the locomotive
     sysCall_putRectangle(x + 6, y + 22, 6, 6, 0x00000000);  // Rueda izquierda
     sysCall_putRectangle(x + 24, y + 22, 6, 6, 0x00000000);  // Rueda derecha
 } 
 
-void drawLocomotiveRight(int x, int y, uint64_t color) {
-    // Cuerpo de la locomotora
+static void drawLocomotiveRight(int x, int y, uint64_t color) {
+    // Locomotive of the train
     sysCall_putRectangle(x, y, 11, SQUARE_SIZE - 17, color); // Cuerpo
-    // Frente de la locomotora
     sysCall_putRectangle(x , y + 11, 11, SQUARE_SIZE, color); // Frente
-    // Techo de la locomotora
     sysCall_putRectangle(x + 22, y, 11, 6, color); // Techo
 
-    // Ventanas de la locomotora
+    // Windows of the locomotive
     sysCall_putRectangle(x + 7, y + 3, 6, 6, 0x00000000); // Ventana
 
-    // Ruedas de la locomotora
+    // Wheels of the locomotive
     sysCall_putRectangle(x + 6, y + 22, 6, 6, 0x00000000); // Rueda izquierda
     sysCall_putRectangle(x + 24, y + 22, 6, 6, 0x00000000); // Rueda derecha
 }
 
 
-void drawLocomotiveVerical(int x, int y, uint64_t color){
-    // Locomotora del tren (girada 90 grados)
+static void drawLocomotiveVerical(int x, int y, uint64_t color){
+    // Locomotive of the train
     sysCall_putRectangle(x, y + 17, SQUARE_SIZE - 17, 11, color); // Cuerpo de la locomotora
     sysCall_putRectangle(x + 11, y, SQUARE_SIZE, 11, color); // Frente de la locomotora
     sysCall_putRectangle(x, y + 3, 6, 11, color); // Techo de la locomotora
 
-    // Ventanas de la locomotora (girada 90 grados)
+    // Windows of the locomotive
     sysCall_putRectangle(x + 3, y + 20, 6, 6, 0x00000000);  // Ventana 3
     
-    // Ruedas de la locomotora (girada 90 grados)
+    // Wheels of the locomotive
     sysCall_putRectangle(x + 22, y + 6, 6, 6, 0x00000000);  // Rueda izquierda
     sysCall_putRectangle(x + 22, y + 24, 6, 6, 0x00000000);  // Rueda derecha
 }
 
-void drawLocomotiveDown(int x, int y, uint64_t color) {
-    // Locomotora del tren (girada 180 grados)
+static void drawLocomotiveDown(int x, int y, uint64_t color){
+    // Locomotive of the train
     sysCall_putRectangle(x, y, SQUARE_SIZE - 17, 11, color); // Cuerpo de la locomotora
     sysCall_putRectangle(x+11, y, SQUARE_SIZE, 11, color); // Frente de la locomotora
     sysCall_putRectangle(x, y + 22, 6, 11, color); // Techo de la locomotora
 
-    // Ventanas de la locomotora (girada 180 grados)
+    // Windows of the locomotive
     sysCall_putRectangle(x + 3, y + 5, 6, 6, 0x00000000);  // Ventana 3
     
-    // Ruedas de la locomotora (girada 180 grados)
+    // Wheels of the locomotive
     sysCall_putRectangle(x + 22, y + 6, 6, 6, 0x00000000);  // Rueda izquierda
     sysCall_putRectangle(x + 22, y + 24, 6, 6, 0x00000000);  // Rueda derecha
 }
 
 
-void drawWagon(int x, int y, uint64_t color) {
-    // Primer vagón del tren bala
+static void drawWagon(int x, int y, uint64_t color) {
+
+    // Wagon
     sysCall_putRectangle(x, y, 22, SQUARE_SIZE, color); // Cuerpo del primer vagón
 
-    // Ventanas del primer vagón
+    // Windows of the wagon
     sysCall_putRectangle(x + 6, y + 3, 6, 6, 0x00000000);  // Ventana 1
     sysCall_putRectangle(x + 14, y + 3, 6, 6, 0x00000000); // Ventana 2
     sysCall_putRectangle(x + 22, y + 3, 6, 6, 0x00000000); // Ventana 3
     
 
-    // Ruedas del primer vagón
+    // Wheels of the wagon
     sysCall_putRectangle(x + 6, y + 22, 6, 6, 0x00000000);  // Rueda izquierda
     sysCall_putRectangle(x + 24, y + 22, 6, 6, 0x00000000);  // Rueda derecha
 }
 
-void drawVericalWagon(int x, int y, uint64_t color) {
-     // Cuerpo del primer vagón (girado 90 grados)
+static void drawVericalWagon(int x, int y, uint64_t color) {
+     // Wagon (On a vertical position)
     sysCall_putRectangle(x, y, SQUARE_SIZE, 22, color); // Cuerpo del primer vagón
 
-    // Ventanas del primer vagón (girado 90 grados)
+    // Windows of the wagon
     sysCall_putRectangle(x + 3, y + 6, 6, 6, 0x00000000);  // Ventana 1
     sysCall_putRectangle(x + 3, y + 14, 6, 6, 0x00000000); // Ventana 2
     sysCall_putRectangle(x + 3, y + 22, 6, 6, 0x00000000); // Ventana 3
 
-    // Ruedas del primer vagón (girado 90 grados)
+    // Wheels of the wagon
     sysCall_putRectangle(x + 22, y + 6, 6, 6, 0x00000000);  // Rueda izquierda
     sysCall_putRectangle(x + 22, y + 24, 6, 6, 0x00000000);  // Rueda derecha
     
 }
 
 
-void drawTrain(Player player) {
+static void drawTrain(Player player) {
     sysCall_putRectangle(rewardPos[0], rewardPos[1],SQUARE_SIZE, SQUARE_SIZE, RED);
     if (player.inc_x == 0 && player.inc_y == -1){
         

@@ -13,8 +13,3 @@ hang:
 	cli
 	hlt	; halt machine should kernel return
 	jmp hang
-
-load_main:
-	call getStackBase
-	mov rsp, rax
-	call main
