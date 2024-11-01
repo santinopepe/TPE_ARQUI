@@ -141,6 +141,14 @@ static void initializeVector(Player * player);
 
 
 /**
+ * @brief Cleans the board, we created this function as sometimes the board is not cleaned correctly
+ * @param void
+ * @return void
+*/
+static void cleanBoard(); 
+
+
+/**
  * @brief This group of functions draw the different parts of the train, on different directions
  * @param x The x position of the train
  * @param y The y position of the train
@@ -214,17 +222,37 @@ static void movePlayer(char c){
 }
 
 
+
 static void newRewardPos(){
+
     int x, y; 
-    do{
+    
         uint64_t ticks = sysCall_ticks();
         x = ticks % (SCREEN_WIDTH-SQUARE_SIZE);
         x = (x / SQUARE_SIZE) * SQUARE_SIZE;
 
         y = ticks % (SCREEN_HEIGHT);
         y = 100 + (y / SQUARE_SIZE) * SQUARE_SIZE;
+    
+        //This conditions makes is so the game doesn't halt while is looking for a new position
+        if((OUT_OF_BOUNDS(x, y) || board[x][y] == 1) && board[5*32][7*32] != 1){
+            x = 5*SQUARE_SIZE;
+            y = 7*SQUARE_SIZE;
+            
+        } else if ((OUT_OF_BOUNDS(x, y) || board[x][y] == 1) && board[7*32][5*32] != 1){
+            x = 7*SQUARE_SIZE;
+            y = 5*SQUARE_SIZE;
+        }else{ //This will halt the game until it finds a new position, it will only happen if the board is almost full full
+            do{
+                uint64_t ticks = sysCall_ticks();
+                x = ticks % (SCREEN_WIDTH-SQUARE_SIZE);
+                x = (x / SQUARE_SIZE) * SQUARE_SIZE;
 
-    }while(OUT_OF_BOUNDS(x, y) || board[x][y] == 1);
+                y = ticks % (SCREEN_HEIGHT);
+                y = 100 + (y / SQUARE_SIZE) * SQUARE_SIZE;
+            }while (OUT_OF_BOUNDS(x, y) || board[x][y] == 1);
+        }
+
     rewardPos[0] = x;
     rewardPos[1] = y;
     reward = 1;
@@ -270,11 +298,12 @@ static int initialize(){
         while(nro_players == 0){
             nro_players = read_char();
         }
-        if(nro_players == 'q'){
-            return -1;
-        }
         if(nro_players != '1' && nro_players != '2'){
             printf("Invalid number of players\n");
+            nro_players = 0;
+        }
+        if(nro_players == 'q'){
+            return -1;
         }
     }while(nro_players != '1' && nro_players != '2');
     nro_players -= '0';
@@ -292,6 +321,7 @@ static int initialize(){
         wait();
     }    
 
+    cleanBoard();
     chooseDificulty();
     return nro_players;
 }
@@ -318,7 +348,7 @@ static void chooseDificulty(){
                 return;
             default:
                 printf("Invalid difficulty\n");
-            break;     
+                break;     
         }
     } while (dif != '1' && dif != '2' && dif != '3'); 
 }
@@ -360,7 +390,7 @@ static void chooseColor(Player * player, int player_number){
                 printf("Invalid color\n");
                 break;     
         }
-        
+
         //Check if the color is already chosen
         if(player->color == player1.color && player_number == 2){
             printf("Color already chosen\n");
@@ -516,7 +546,13 @@ void play(){
 }
 
 
-
+static void cleanBoard(){
+    for (int i = 0; i < SCREEN_WIDTH; i++) {
+        for (int j = 0; j < SCREEN_HEIGHT; j++) {
+            board[i][j] = 0;
+        }
+    }
+}
 
 static void drawLocomotiveLeft(int x, int y, uint64_t color) {
     // Locomotive of the train
@@ -593,7 +629,7 @@ static void drawWagon(int x, int y, uint64_t color) {
 }
 
 static void drawVericalWagon(int x, int y, uint64_t color) {
-     // Wagon (On a vertical position)
+    // Wagon (On a vertical position)
     sysCall_putRectangle(x, y, SQUARE_SIZE, 22, color); // Cuerpo del primer vagón
 
     // Windows of the wagon

@@ -3,7 +3,7 @@
 #include <defs.h>
 #include <time.h>
 
-#define DEFAULT_HEIGTH 32
+#define DEFAULT_HEIGHT 32
 #define DEFAULT_WIDTH 10
 
 static int CHAR_WIDTH = 10; 
@@ -121,10 +121,10 @@ void putBackSpace(){
 		cursorY -= CHAR_HEIGHT;
 		clearRectangle(cursorX, cursorY, CHAR_HEIGHT,CHAR_WIDTH);
 		return; 
-	}
+	} 
 	if(cursorX==0){
 		cursorY -= CHAR_HEIGHT;
-		cursorX = VBE_mode_info->width-CHAR_WIDTH/2;
+		cursorX = ((VBE_mode_info->width/CHAR_WIDTH)-1)*CHAR_WIDTH;
 		clearRectangle(cursorX, cursorY, CHAR_HEIGHT,CHAR_WIDTH);
 		return;
 	}
@@ -169,17 +169,17 @@ void putChar(char c, uint32_t hexColor) {
                 if (cursorX + CHAR_WIDTH >= VBE_mode_info->width) {
                     newLine();
                 }
-                // Dibujar el carácter en la posición actual del cursor (letras invertidas)
-                for (int i = 0; i < DEFAULT_HEIGTH ; i++) {
+                // Draw the character
+                for (int i = 0; i < DEFAULT_HEIGHT ; i++) {
                     for (int j = 0; j < DEFAULT_WIDTH; j++) {
-                        // Cambiar el orden de los bits, dibujándolos de derecha a izquierda
+                        // Change the order of the bits
                         if ((uint8_t)font[i + ((start) * 32)] & (1 << j)) {
 							putRectangle(cursorX + j, cursorY + i, SIZE, SIZE, hexColor);
-                        	//putPixel(hexColor, cursorX + j, cursorY + i);
+                        	
                     	}
                     }
                 }
-                // Incrementar la posición del cursor horizontalmente
+                // Increment cursor position
                 cursorX += CHAR_WIDTH;
             }
             return;
@@ -230,7 +230,7 @@ uint64_t getCursorX(){
 
 void setLetterSize(int size){
 	CHAR_WIDTH =  size + DEFAULT_WIDTH;
-	CHAR_HEIGHT = size + DEFAULT_HEIGTH;
+	CHAR_HEIGHT = size + DEFAULT_HEIGHT;
 	SIZE = size;
 }
 

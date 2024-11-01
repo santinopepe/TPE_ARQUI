@@ -56,7 +56,7 @@ void printNchars(const char * str, int n){
 
 int scanf(char * buffer) {
     int idx = 0;
-    int yUserPos = sysCall_cursorY(); // We save the y position of the user, so we can check if the user tries to eliminate "user: " from the command line
+    int yUserPos = sysCall_cursorY(); // We save the Y position of the user, so we can check if the user tries to eliminate "$User: " from the command line
     while (1) {
         char c = read_char();
         if(c == '\b' && sysCall_cursorX() <= USER_LEN && sysCall_cursorY() == yUserPos){
@@ -64,7 +64,7 @@ int scanf(char * buffer) {
         }   
         putChar(c, 1); // We print the character
 
-        //We handle the diffrent cases of the special characters
+        //We handle the different cases of the special characters
         if (c != -1 && c != 0) {
             if (c == '\b' && idx > 0) {
                 idx--;
