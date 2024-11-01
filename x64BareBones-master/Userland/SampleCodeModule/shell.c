@@ -69,7 +69,8 @@ void welcome(){
 }
 
 void help(){
-    if(sysCall_getScreenHeight() < sysCall_cursorY() + 9){
+    // If the screen is full, we clear it and print the message
+    if(sysCall_getScreenHeight() < sysCall_cursorY() + 10){
         clear();
         commandLine();
         printf("help\n");
@@ -78,16 +79,18 @@ void help(){
 }
 
 void echo(char * str){
-    if(sysCall_getScreenHeight() < sysCall_cursorY() - 1){
+    // If the screen is full, we clear it and print the message
+    if(sysCall_getScreenHeight() < sysCall_cursorY() + 2){
         clear();
         commandLine();
-        printf("echo", str);
+        printf("echo\n", str);
     }
     puts(str);
 }
 
 void time(){
-    if(sysCall_getScreenHeight() <  sysCall_cursorY() + 2){
+    // If the screen is full, we clear it and print the message
+    if(sysCall_getScreenHeight() <  sysCall_cursorY() + 3){
         clear();
         commandLine();
         printf("time\n");
@@ -99,12 +102,11 @@ void time(){
 }
 
 void regs(){
+    // If the screen is full, we clear it and print the message
     if((sysCall_getScreenHeight() < sysCall_cursorY() + 18 && sysCall_snapshotState() == 1) || (sysCall_snapshotState() == 0 && sysCall_getScreenHeight() < sysCall_cursorY())){
         clear();
         commandLine();
         printf("regs\n");
-        
-        
     }
     sysCall_writeRegs();
 }
@@ -119,6 +121,24 @@ void set_letterSize(float size){
 
 void game(){
     play();
+}
+
+static void invalidOpException(){
+    if(sysCall_getScreenHeight() <= sysCall_cursorY() + 25){ // If the screen is full, we clear it and print the message
+        clear();
+        commandLine();
+        printf("invalidOp\n");
+    }
+    invalidOpCode();
+}
+
+static void divideByZeroException(){
+    if(sysCall_getScreenHeight() <= sysCall_cursorY() + 25){ // If the screen is full, we clear it and print the message
+        clear();
+        commandLine();
+        printf("divideBy0\n");
+    }
+    divideByZero();
 }
 
 
@@ -276,23 +296,4 @@ static uint32_t uintToBase(uint64_t value, char * buffer, uint32_t base){
 	}
 
 	return digits;
-}
-
-
-static void invalidOpException(){
-    if(sysCall_getScreenHeight() <= sysCall_cursorY() + 24){
-        clear();
-        commandLine();
-        printf("invalidOp\n");
-    }
-    invalidOpCode();
-}
-
-static void divideByZeroException(){
-    if(sysCall_getScreenHeight() <= sysCall_cursorY() + 24){
-        clear();
-        commandLine();
-        printf("divideBy0\n");
-    }
-    divideByZero();
 }
