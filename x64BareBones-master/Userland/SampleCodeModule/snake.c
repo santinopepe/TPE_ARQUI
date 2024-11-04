@@ -391,7 +391,7 @@ static void chooseColor(Player * player, int player_number){
                 break;     
         }
 
-        //Check if the color is already chosen
+        //Check if the color is already choosen
         if(player->color == player1.color && player_number == 2){
             printf("Color already chosen\n");
             color = 0;
