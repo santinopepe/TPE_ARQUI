@@ -37,7 +37,7 @@ static void zero_division() {
 	printf("Zero division exception\n", RED);
 	snapShotTaken = 1; // Here we set the flag to 1, else the printRegisters function will not print the registers
 	printRegAsm();
-	printf("\nReturning to shell...\n", RED);
+	printf("Returning to shell...\n", RED);
 	return;
 }
 
@@ -45,6 +45,6 @@ static void invalid_op_code() {
 	printf("Invalid op code exception\n", RED);
 	snapShotTaken = 1; // Here we set the flag to 1, else the printRegisters function will not print the registers
 	printRegAsm();
-	printf("\n Returning to shell...\n", RED);	
+	printf("Returning to shell...\n", RED);	
 	return;
 }
