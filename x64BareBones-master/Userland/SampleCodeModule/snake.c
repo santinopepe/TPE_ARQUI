@@ -298,13 +298,14 @@ static int initialize(){
         while(nro_players == 0){
             nro_players = read_char();
         }
+        if(nro_players == 'q'){
+            return -1;
+        }
         if(nro_players != '1' && nro_players != '2'){
             printf("Invalid number of players\n");
             nro_players = 0;
         }
-        if(nro_players == 'q'){
-            return -1;
-        }
+        
     }while(nro_players != '1' && nro_players != '2');
     nro_players -= '0';
 

@@ -26,7 +26,6 @@ static unsigned int decode(unsigned int time);
  * @param base The base of the number
  * @returns The number of digits of the number
 */
-
 static uint32_t uintToBase(uint64_t value, char * buffer, uint32_t base); 
 
 
@@ -133,7 +132,7 @@ static void invalidOpException(){
 }
 
 static void divideByZeroException(){
-    if(sysCall_getScreenHeight() <= sysCall_cursorY() + 25){ // If the screen is full, we clear it and print the message
+   if(sysCall_getScreenHeight() <= sysCall_cursorY() + 25){ // If the screen is full, we clear it and print the message
         clear();
         commandLine();
         printf("divideBy0\n");
