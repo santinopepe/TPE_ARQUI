@@ -72,6 +72,7 @@ SECTION .text
 	mov rdi, %1 ;PARAMETER
 	cmp rdi, 1 
 	jne .noSave
+	
 	saveRegisters
 
 	.noSave:
@@ -111,7 +112,7 @@ SECTION .text
 	mov [registers+8*15], rax ;Save the stack pointer
 	mov rax, [rsp+15*8] 
 	mov [registers+8*16], rax ;Save the instruction pointer
-	mov rax, [rsp+15*8+8]
+	mov rax, [rsp+17*8]
 	mov [registers+8*17], rax ;Save the flags
 
 %endmacro
